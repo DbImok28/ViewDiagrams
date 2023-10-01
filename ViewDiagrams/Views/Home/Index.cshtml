@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <div class="work-space-view">
+        <div class="work-space">
+
+            <div class="draggable">
+                <div class="draggable-header">Click here to move</div>
+                <p>Item1</p>
+                <p>Item2</p>
+                <p>Item3</p>
+            </div>
+
+            <div class="draggable">
+                <div class="draggable-header">Click here to move</div>
+                <p>Item1</p>
+                <p>Item2</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<environment include="Development">
+    <script src="~/js/script.js" asp-append-version="true"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/script.min.js" asp-append-version="true"></script>
+</environment>
