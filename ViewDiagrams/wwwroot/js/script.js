@@ -22,6 +22,31 @@ function setScrollAtCenter(elem) {
     // elem.scrollLeft = pos.scrollHight / 2
 }
 
+function getTranslateXY(elem) {
+    const style = window.getComputedStyle(elem)
+    const matrix = new DOMMatrixReadOnly(style.transform)
+    return {
+        x: matrix.m41,
+        y: matrix.m42
+    }
+}
+
+function applyGridSnap(elem) {
+    let pos = getTranslateXY(elem)
+
+    let gridSnap = 5;
+    setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
+}
+
+function setElementPosition(elem, x, y) {
+    elem.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+function moveElement(elem, dx, dy) {
+    let pos = getTranslateXY(elem);
+    setElementPosition(elem, pos.x - dx, pos.y - dy)
+}
+
 function startDragMove(e, elem) {
     e.preventDefault()
 
@@ -41,14 +66,18 @@ function startDragMove(e, elem) {
 
         pos.x = e.clientX
         pos.y = e.clientY
+        //console.log(pos)
 
-        elem.style.top = (elem.offsetTop - dy) + "px"
-        elem.style.left = (elem.offsetLeft - dx) + "px"
+        //elem.style.top = (elem.offsetTop - dy) + "px"
+        //elem.style.left = (elem.offsetLeft - dx) + "px"
+        //elem.style.transform = `translate(${elem.offsetLeft - dx}px, ${elem.offsetTop - dy}px)`;
+        moveElement(elem, dx, dy)
     }
 
     function closeDragElement() {
         document.onmouseup = null
         document.onmousemove = null
+        applyGridSnap(elem)
     }
 }
 
