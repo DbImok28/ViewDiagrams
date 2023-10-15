@@ -31,9 +31,7 @@ function getTranslateXY(elem) {
     }
 }
 
-function applyGridSnap(elem) {
-    let pos = getTranslateXY(elem)
-
+function moveOnGrid(elem, pos) {
     let gridSnap = 5;
     setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
 }
@@ -42,18 +40,16 @@ function setElementPosition(elem, x, y) {
     elem.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-function moveElement(elem, dx, dy) {
-    let pos = getTranslateXY(elem);
-    setElementPosition(elem, pos.x - dx, pos.y - dy)
-}
-
 function startDragMove(e, elem) {
     e.preventDefault()
 
-    let pos = {
+
+    let curPos = {
         x: e.clientX,
-        y: e.clientY,
+        y: e.clientY
     }
+
+    let elemPos = getTranslateXY(elem)
 
     document.onmouseup = closeDragElement
     document.onmousemove = elementDrag
@@ -61,23 +57,23 @@ function startDragMove(e, elem) {
     function elementDrag(e) {
         e.preventDefault()
 
-        const dx = pos.x - e.clientX
-        const dy = pos.y - e.clientY
+        const dx = curPos.x - e.clientX
+        const dy = curPos.y - e.clientY
 
-        pos.x = e.clientX
-        pos.y = e.clientY
-        //console.log(pos)
+        curPos.x = e.clientX
+        curPos.y = e.clientY
 
-        //elem.style.top = (elem.offsetTop - dy) + "px"
-        //elem.style.left = (elem.offsetLeft - dx) + "px"
-        //elem.style.transform = `translate(${elem.offsetLeft - dx}px, ${elem.offsetTop - dy}px)`;
-        moveElement(elem, dx, dy)
+        elemPos.x = elemPos.x - dx;
+        elemPos.y = elemPos.y - dy;
+
+        console.log(elemPos)
+
+        moveOnGrid(elem, elemPos)
     }
 
     function closeDragElement() {
         document.onmouseup = null
         document.onmousemove = null
-        applyGridSnap(elem)
     }
 }
 
