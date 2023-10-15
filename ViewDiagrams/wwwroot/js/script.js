@@ -66,8 +66,6 @@ function startDragMove(e, elem) {
         elemPos.x = elemPos.x - dx;
         elemPos.y = elemPos.y - dy;
 
-        console.log(elemPos)
-
         moveOnGrid(elem, elemPos)
     }
 

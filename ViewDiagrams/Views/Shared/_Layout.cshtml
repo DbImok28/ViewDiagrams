@@ -16,13 +16,10 @@
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sidebars.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ViewDiagrams.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        @await Html.PartialAsync("_NavBar")
-    </header>
-
     <environment include="Development">
         <script src="~/lib/vue/dist/vue.js"></script>
     </environment>
@@ -30,17 +27,7 @@
         <script src="~/lib/vue/dist/vue.min.js"></script>
     </environment>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - ViewDiagrams - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    @RenderBody()
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -51,7 +38,7 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </environment>
 
-
+    <script src="~/js/sidebars.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

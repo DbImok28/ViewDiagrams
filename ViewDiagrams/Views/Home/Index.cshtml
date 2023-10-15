@@ -2,7 +2,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div>
+
+@* <div>
     <div class="work-space-view">
         <div class="work-space">
 
@@ -21,8 +22,24 @@
 
         </div>
     </div>
-</div>
+</div> *@
 
+
+<div class="d-flex flex-row min-vh-100 mw-100 overflow-hidden" style="">
+
+    <!-- Side bar left -->
+    @await Html.PartialAsync("Panels/SidePanel")
+
+    <!-- Tool bar left -->
+    @await Html.PartialAsync("Panels/ItemPanel")
+
+    @await Html.PartialAsync("Workspace/Workspace");
+
+    @* <div class="">
+        <p>asdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd2 2fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf</p>
+
+    </div> *@
+    </div>
 
 <environment include="Development">
     <script src="~/js/script.js" asp-append-version="true"></script>
