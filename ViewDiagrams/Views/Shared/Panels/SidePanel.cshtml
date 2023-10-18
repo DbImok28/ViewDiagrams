@@ -1,28 +1,23 @@
 ﻿<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-light border-end side-panel">
-    <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+    <ul class="nav nav-pills nav-flush flex-column mb-auto text-center" role="tablist">
         <li class="nav-item">
-            <a href="#" class="nav-link active py-3 border-bottom" aria-current="page" title="" data-bs-toggle="tooltip"
-               data-bs-placement="right" data-bs-original-title="Diagrams">
+            <button class="nav-link active py-3 border-bottom" id="diagram-list-tab"
+                    data-bs-toggle="tab" data-bs-target="#diagram-list" type="button" role="tab" aria-controls="diagram-list" aria-selected="true"
+                    aria-current="page" title="" data-bs-placement="right" data-bs-original-title="Diagrams">
                 <i class="bi bi-diagram-2 fs-4"></i>
-            </a>
+            </button>
         </li>
         <li>
-            <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
-               data-bs-original-title="Info">
-                <i class="bi bi-wind fs-4"></i>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
-               data-bs-original-title="Access Settings">
+            <button class="nav-link py-3 border-bottom" id="access-settings-tab"
+                    data-bs-toggle="tab" data-bs-target="#access-settings" type="button" role="tab" aria-controls="access-settings" aria-selected="false">
                 <i class="bi bi-people fs-4"></i>
-            </a>
+            </button>
         </li>
         <li>
-            <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
-               data-bs-original-title="Settings">
+            <button class="nav-link py-3 border-bottom" id="settings-tab"
+                    data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
                 <i class="bi bi-gear fs-4"></i>
-            </a>
+            </button>
         </li>
     </ul>
     <div class="dropdown border-top">
