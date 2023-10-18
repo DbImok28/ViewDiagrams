@@ -1,23 +1,29 @@
 .work-space-view {
-    inset: 50px 340px 40px 342px;
+    inset: var(--up-panel-height) var(--right-panel-width) var(--down-panel-height) var(--left-panel-width);
     position: absolute;
     overflow: auto;
     cursor: grab;
 }
 
 .work-space {
-    background-color: #d3d3d3;
+    /*background-color: #d3d3d3;*/
+    --work-space-width: 2000px;
+    --work-space-height: 2000px;
     text-align: center;
-    /*border: 1px solid #a8a8a8;*/
-    /*position: absolute*/
-    width: 2000px;
-    height: 2000px;
+    width: var(--work-space-width);
+    height: var(--work-space-height);
     z-index: 5;
+    /**/
+    position: absolute;
+    /*border-color: rgb(255, 255, 255);*/
+    /*border-style: solid;*/
+    /*background-color: rgb(255, 255, 255);*/
+    background-image: url(../icons/grid.svg);
+    /*background-position: -1px -1px;*/
 }
 
 .draggable {
     position: absolute;
-    /*z-index: 0;*/
     background-color: #f1f1f1;
     text-align: center;
     border: 1px solid #d3d3d3;
