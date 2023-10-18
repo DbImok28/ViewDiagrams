@@ -1,0 +1,53 @@
+﻿<div>
+    <div class="input-group rounded mb-2">
+        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        <span class="input-group-text border-0" id="search-addon">
+            <i class="bi bi-search"></i>
+        </span>
+    </div>
+    <ul class="list-unstyled ps-0">
+        <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded" data-bs-toggle="collapse"
+                    data-bs-target="#uml-class-collapse" aria-expanded="true">
+                UML Class
+            </button>
+            <div class="collapse show" id="uml-class-collapse" style="">
+                <div class="btn-toggle-nav user-select-none">
+                    <button class="bi bi-wind fs-3 btn"></button>
+                    <button class="bi bi-wind fs-3 btn"></button>
+                    <button class="bi bi-wind fs-3 btn"></button>
+                    <button class="bi bi-wind fs-3 btn"></button>
+                </div>
+            </div>
+        </li>
+        <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded" data-bs-toggle="collapse"
+                    data-bs-target="#auxiliary-collapse" aria-expanded="true">
+                Auxiliary
+            </button>
+            <div class="collapse show" id="auxiliary-collapse" style="">
+                <div class="btn-toggle-nav user-select-none">
+                    <button class="bi bi-command fs-3 btn"></button>
+                    <button class="bi bi-command fs-3 btn"></button>
+                    <button class="bi bi-command fs-3 btn"></button>
+                    <button class="bi bi-command fs-3 btn"></button>
+                </div>
+            </div>
+        </li>
+        <li class="border-top my-3"></li>
+        <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                    data-bs-target="#account-collapse" aria-expanded="false">
+                Account
+            </button>
+            <div class="collapse" id="account-collapse" style="">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><a href="#" class="link-dark rounded">New...</a></li>
+                    <li><a href="#" class="link-dark rounded">Profile</a></li>
+                    <li><a href="#" class="link-dark rounded">Settings</a></li>
+                    <li><a href="#" class="link-dark rounded">Sign out</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>

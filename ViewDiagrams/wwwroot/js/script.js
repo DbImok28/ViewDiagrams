@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    work_spaces = document.getElementsByClassName("work-space")
+    let work_spaces = document.getElementsByClassName("work-space")
     for (let i = 0; i < work_spaces.length; i++) {
         makeWorkSpace(work_spaces[i])
     }
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function makeWorkSpace(work_space) {
     work_space.onmousedown = onClick
     work_space_view = work_space.closest('.work-space-view')
-    setScrollAtCenter(work_space_view)
+    setScrollAtCenter(work_space_view, work_space)
 
     function onClick(e) {
         dragElem = e.target
@@ -17,9 +17,15 @@ function makeWorkSpace(work_space) {
     }
 }
 
-function setScrollAtCenter(elem) {
-    // elem.scrollTop = pos.scrollWidth / 2
-    // elem.scrollLeft = pos.scrollHight / 2
+function setScrollAtCenter(work_space_view, work_space) {
+    let compStyles = getComputedStyle(work_space)
+    let width = parseInt(compStyles.getPropertyValue('--work-space-width'));
+    let height = parseInt(compStyles.getPropertyValue('--work-space-height'));
+
+    let clientWidth = work_space_view.clientWidth;
+    let clientHeight = work_space_view.clientHeight;
+
+    work_space_view.scrollTo(width / 2 - clientWidth / 2, height / 2 - clientHeight / 2)
 }
 
 function getTranslateXY(elem) {
@@ -32,7 +38,7 @@ function getTranslateXY(elem) {
 }
 
 function moveOnGrid(elem, pos) {
-    let gridSnap = 5;
+    let gridSnap = 10;
     setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
 }
 

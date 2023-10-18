@@ -1,46 +1,19 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "WorkSpace";
 }
 
+<div class="d-flex flex-column min-vh-100 min-vw-100" style="max-height: 100vh; max-width: 100vw;">
 
-@* <div>
-    <div class="work-space-view">
-        <div class="work-space">
-
-            <div class="draggable">
-                <div class="draggable-header">Click here to move</div>
-                <p>Item1</p>
-                <p>Item2</p>
-                <p>Item3</p>
-            </div>
-
-            <div class="draggable">
-                <div class="draggable-header">Click here to move</div>
-                <p>Item1</p>
-                <p>Item2</p>
-            </div>
-
-        </div>
+    @await Html.PartialAsync("Panels/TopPanel")
+    <div class="flex-fill d-flex flex-row overflow-hidden">
+        @await Html.PartialAsync("Panels/SidePanel")
+        @await Html.PartialAsync("Panels/ItemsPanel")
+        @await Html.PartialAsync("Workspace/Workspace")
+        @await Html.PartialAsync("Panels/DetailsPanel")
     </div>
-</div> *@
+    @await Html.PartialAsync("Panels/BottomPanel")
 
-
-<div class="d-flex flex-row min-vh-100 mw-100 overflow-hidden" style="">
-
-    <!-- Side bar left -->
-    @await Html.PartialAsync("Panels/SidePanel")
-
-    <!-- Tool bar left -->
-    @await Html.PartialAsync("Panels/ItemPanel")
-
-    @await Html.PartialAsync("Workspace/Workspace");
-
-    @* <div class="">
-        <p>asdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd2 2fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf</p>
-
-    </div> *@
-    </div>
-
+</div>
 <environment include="Development">
     <script src="~/js/script.js" asp-append-version="true"></script>
 </environment>
