@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 })
 
+// Workspace
 function makeWorkSpace(work_space) {
     work_space.onmousedown = onClick
     work_space_view = work_space.closest('.work-space-view')

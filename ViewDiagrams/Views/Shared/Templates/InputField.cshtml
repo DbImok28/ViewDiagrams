@@ -1,0 +1,8 @@
+﻿@model InputField
+
+<div class="col-md mt-2">
+    <div class="form-floating">
+        <input class="form-control @(Model.State == InputControlState.Valid ? "is-valid" : (@Model.State==InputControlState.InValid ? "is-invalid" : null))" id="input-@Model.Name" value="@Model.Value">
+        <label for="input-@Model.Name">@Model.Name</label>
+    </div>
+</div>

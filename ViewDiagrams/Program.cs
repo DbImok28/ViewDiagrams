@@ -1,3 +1,5 @@
+using ViewDiagrams.Models;
+
 namespace ViewDiagrams
 {
     public class Program
@@ -6,6 +8,10 @@ namespace ViewDiagrams
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
+            });
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -19,6 +25,7 @@ namespace ViewDiagrams
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -28,7 +35,7 @@ namespace ViewDiagrams
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=WorkSpace}/{action=Index}/{id?}");
 
             app.Run();
         }
