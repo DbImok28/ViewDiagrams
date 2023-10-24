@@ -1,3 +1,4 @@
+using ViewDiagrams.Hubs;
 using ViewDiagrams.Models;
 
 namespace ViewDiagrams
@@ -12,8 +13,8 @@ namespace ViewDiagrams
             {
                 options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
             });
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -36,6 +37,8 @@ namespace ViewDiagrams
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=WorkSpace}/{action=Index}/{id?}");
+
+            app.MapHub<WorkspaceHub>("/api/workspace");
 
             app.Run();
         }

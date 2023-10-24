@@ -1,3 +1,5 @@
+'use strict'
+
 document.addEventListener('DOMContentLoaded', function () {
     let work_spaces = document.getElementsByClassName("work-space")
     for (let i = 0; i < work_spaces.length; i++) {
@@ -8,11 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
 // Workspace
 function makeWorkSpace(work_space) {
     work_space.onmousedown = onClick
-    work_space_view = work_space.closest('.work-space-view')
+    let work_space_view = work_space.closest('.work-space-view')
     setScrollAtCenter(work_space_view, work_space)
 
     function onClick(e) {
-        dragElem = e.target
+        let dragElem = e.target
         if (dragElem.className === "draggable-header") startDragMove(e, dragElem.closest('.draggable'))
         else if (!dragElem.closest('.draggable')) startDragScroll(e, work_space_view)
     }
