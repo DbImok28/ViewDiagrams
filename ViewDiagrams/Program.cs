@@ -26,7 +26,6 @@ namespace ViewDiagrams
                 app.UseHsts();
             }
 
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

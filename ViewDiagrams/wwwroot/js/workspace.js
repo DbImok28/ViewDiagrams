@@ -1,23 +1,6 @@
 ﻿'use strict'
 
-//function SaveWorkSpace() {
-//    let settings = GetAllInputFieldsAsJson()
-//    fetch("https://localhost:32768/WorkSpace/SaveSettings", {
-//        method: 'post',
-//        body: settings,
-//        headers: {
-//            'Content-Type': 'application/json'
-//        }
-//        //}).then(() => {
-//        //    return;
-//    }).then((res) => {
-//        if (res.status === 201) {
-//            console.log("Post successfully created!")
-//        }
-//    }).catch((error) => {
-//        console.log(error)
-//    })
-//}
+// Serialize inputs fields
 
 function GetAllInputFieldsAsJson() {
     let settingsAsJson = '{'
@@ -50,7 +33,7 @@ function GetAllInputFieldsAsJson() {
     return settingsAsJson
 }
 
-function SetAllInputFieldsAsJson(jsonSettings) {
+function SetAllInputFieldsFromJson(jsonSettings) {
     let settings = JSON.parse(jsonSettings)
     let settingsPages = document.querySelectorAll('div[id^="settings-"]')
     for (let i = 0; i < settingsPages.length; i++) {
@@ -75,25 +58,76 @@ function SetAllInputFieldsAsJson(jsonSettings) {
     }
 }
 
+// Sink changes between workspaces
+
 var connection = new signalR.HubConnectionBuilder().withUrl("/api/workspace").build()
 
-connection.on("Update", function (newData) {
-    console.log("msg update:" + newData)
-    SetAllInputFieldsAsJson(newData)
-});
-
-connection.start().then(function () {
-    console.log("msg start")
-}).catch(function (err) {
-    return console.error(err.toString())
-})
-
-function SaveWorkSpace() {
+function SinkWorkspace() {
     connection.invoke("Sink", GetAllInputFieldsAsJson())
         .then(function () {
-            console.log("msg send")
+            console.log("sink")
         })
         .catch(function (err) {
             return console.error(err.toString())
         })
 }
+
+function PullWorkspace() {
+    connection.invoke("Pull")
+        .then(function () {
+            console.log("pull")
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
+function JoinToWorkspace(workspaceId) {
+    connection.invoke("Join", workspaceId)
+        .then(function () {
+            console.log("join: " + workspaceId)
+            PullWorkspace()
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
+function LeaveFromWorkspace() {
+    connection.invoke("Leave")
+        .then(function () {
+            console.log("leave")
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
+connection.on("Update", function (newData) {
+    console.log("update:" + newData)
+    SetAllInputFieldsFromJson(newData)
+});
+
+connection.start().then(function () {
+    console.log("start")
+
+    JoinToWorkspace("1234")
+
+    //connection.invoke("Join", "1234")
+    //    .then(function () {
+    //        console.log("join")
+    //        connection.invoke("Pull")
+    //            .then(function () {
+    //                console.log("pull")
+    //            })
+    //            .catch(function (err) {
+    //                return console.error(err.toString())
+    //            })
+    //    })
+    //    .catch(function (err) {
+    //        return console.error(err.toString())
+    //    })
+
+}).catch(function (err) {
+    return console.error(err.toString())
+})
