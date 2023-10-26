@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ViewDiagrams.Hubs;
 using ViewDiagrams.Models;
 
@@ -14,6 +15,10 @@ namespace ViewDiagrams
                 options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
             });
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             builder.Services.AddSignalR();
 
             var app = builder.Build();
