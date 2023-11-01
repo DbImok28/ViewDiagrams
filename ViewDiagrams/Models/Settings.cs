@@ -4,15 +4,20 @@ using System.Text.Json.Serialization;
 
 namespace ViewDiagrams.Models
 {
-    public class Settings
-    {
-        [Key]
-        [JsonIgnore]
-        public int Id { get; set; }
+	public class Settings
+	{
+		[Key]
+		[JsonIgnore]
+		public int Id { get; set; }
 
-        [ForeignKey("AccessSettings")]
-        [JsonIgnore]
-        public int AccessSettingsId { get; set; }
-        public AccessSettings AccessSettings { get; set; } = new AccessSettings();
-    }
+		[ForeignKey("AccessSettings")]
+		[JsonIgnore]
+		public int AccessSettingsId { get; set; }
+		public AccessSettings AccessSettings { get; set; } = new AccessSettings();
+
+		[ForeignKey("WorkspaceSettings")]
+		[JsonIgnore]
+		public int WorkspaceSettingsId { get; set; }
+		public WorkspaceSettings WorkspaceSettings { get; set; } = new WorkspaceSettings();
+	}
 }

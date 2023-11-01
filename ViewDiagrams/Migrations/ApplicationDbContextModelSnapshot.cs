@@ -189,9 +189,14 @@ namespace ViewDiagrams.Migrations
                     b.Property<int>("AccessSettingsId")
                         .HasColumnType("int");
 
+                    b.Property<int>("WorkspaceSettingsId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccessSettingsId");
+
+                    b.HasIndex("WorkspaceSettingsId");
 
                     b.ToTable("Settings");
                 });
@@ -286,6 +291,23 @@ namespace ViewDiagrams.Migrations
                     b.ToTable("Workspaces");
                 });
 
+            modelBuilder.Entity("ViewDiagrams.Models.WorkspaceSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkspaceSettings");
+                });
+
             modelBuilder.Entity("ViewDiagrams.Models.WorkspaceUser", b =>
                 {
                     b.Property<int>("WorkspaceId")
@@ -360,7 +382,15 @@ namespace ViewDiagrams.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ViewDiagrams.Models.WorkspaceSettings", "WorkspaceSettings")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AccessSettings");
+
+                    b.Navigation("WorkspaceSettings");
                 });
 
             modelBuilder.Entity("ViewDiagrams.Models.Workspace", b =>

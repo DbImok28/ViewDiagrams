@@ -1,4 +1,5 @@
-﻿<div class="d-flex flex-row align-items-center border-bottom up-panel">
+﻿@using System.Security.Claims;
+<div class="d-flex flex-row align-items-center border-bottom up-panel">
 	@* <i class="bi bi-people fs-4"></i> *@
 	<button class="p-4 btn" style="background-color:transparent" onclick="SinkWorkspace()">
 		<i class="bi bi-save fs-4"></i>
@@ -16,6 +17,20 @@
 			<i class="bi bi-person-circle fs-2"></i>
 		</a>
 		<ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
+			
+			@if (User.Identity.IsAuthenticated)
+			{
+				<li>
+					<div class="d-flex flex-row align-items-center ps-3">
+					<i class="bi bi-person-circle fs-2"></i>
+					<div>
+							<p class="dropdown-item m-0 pb-0">@User.FindFirst(ClaimTypes.Name)?.Value</p>
+							<p class="dropdown-item m-0 pb-0">@User.FindFirst(ClaimTypes.Email)?.Value</p>
+						</div>
+					</div>
+				</li>
+				<li><hr class="dropdown-divider"></li>
+			}
 			<li><a class="dropdown-item" href="#">Settings</a></li>
 			<li><a class="dropdown-item" href="#">Profile</a></li>
 
