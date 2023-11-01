@@ -1,13 +1,17 @@
 ﻿@model LoginViewModel
 
+@section Styles {
+	<link rel="stylesheet" href="~/css/forms.css" asp-append-version="true" />
+}
+
 <section class="h-100 my-login-page">
 	<div class="container h-100">
 		<div class="row justify-content-md-center h-100">
 			<div class="card-wrapper">
 				<div class="brand">
-					<img src="img/logo.jpg" alt="logo">
+					<img src="~/icons/logo_bd.png" alt="logo">
 				</div>
-				<div class="card fat">
+				<div class="card fat rounded">
 					<div class="card-body">
 						<h4 class="card-title">Login</h4>
 
@@ -18,7 +22,7 @@
 							</div>
 						}
 
-						<form asp-controller="Account" asp-action="Login" class="my-login-validation">
+						<form asp-controller="Account" asp-action="Login">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 							<div class="form-group">
@@ -36,15 +40,15 @@
 							<div class="form-group">
 								<div class="custom-checkbox custom-control">
 									<input asp-for="RememberPassword" type="checkbox" class="custom-control-input">
-									<label asp-for="RememberPassword" class="custom-control-label">Remember Me</label>
+									Remember Me
 								</div>
 							</div>
 
 							<div class="form-group m-0">
-								<button type="submit" class="btn btn-primary btn-block">Login</button>
+								<button type="submit" class="btn btn-primary btn-block w-100">Login</button>
 							</div>
 							<div class="mt-4 text-center">
-								Don't have an account? <a href="/Account/Register">Create One</a>
+								Don't have an account? <a href="/Account/Register">Register</a>
 							</div>
 						</form>
 					</div>

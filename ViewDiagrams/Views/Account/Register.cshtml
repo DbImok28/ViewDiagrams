@@ -1,13 +1,17 @@
 ﻿@model RegisterViewModel
 
+@section Styles {
+	<link rel="stylesheet" href="~/css/forms.css" asp-append-version="true" />
+}
+
 <section class="h-100 my-login-page">
 	<div class="container h-100">
 		<div class="row justify-content-md-center h-100">
 			<div class="card-wrapper">
 				<div class="brand">
-					<img src="img/logo.jpg" alt="bootstrap 4 login page">
+					<img src="~/icons/logo_bd.png" alt="logo">
 				</div>
-				<div class="card fat">
+				<div class="card fat rounded">
 					<div class="card-body">
 						<h4 class="card-title">Register</h4>
 
@@ -18,7 +22,7 @@
 							</div>
 						}
 
-						<form asp-controller="Account" asp-action="Register" class="my-login-validation">
+						<form asp-controller="Account" asp-action="Register">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 							<div class="form-group">
@@ -45,28 +49,15 @@
 								<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
 							</div>
 
-							<p>userX@mail.com</p>
-							<p>Pa$$w0rd</p>
-
 							<div class="form-group">
 								<div class="custom-checkbox custom-control">
 									<input asp-for="RememberPassword" type="checkbox" class="custom-control-input">
-									<label asp-for="RememberPassword" class="custom-control-label">Remember Me</label>
+									Remember Me
 								</div>
 							</div>
 
-							@* <div class="form-group">
-								<div class="custom-checkbox custom-control">
-									<input type="checkbox" name="agree" id="agree" class="custom-control-input" required="">
-									<label for="agree" class="custom-control-label">I agree to the <a href="#">Terms and Conditions</a></label>
-									<div class="invalid-feedback">
-										You must agree with our Terms and Conditions
-									</div>
-								</div>
-							</div> *@
-
 							<div class="form-group m-0">
-								<button type="submit" class="btn btn-primary btn-block">
+								<button type="submit" class="btn btn-primary btn-block w-100">
 									Register
 								</button>
 							</div>
@@ -79,6 +70,8 @@
 				<div class="footer">
 					Copyright &copy; 2017 &mdash; Your Company
 				</div>
+							<p>userX@mail.com</p>
+							<p>Pa$$w0rd</p>
 			</div>
 		</div>
 	</div>

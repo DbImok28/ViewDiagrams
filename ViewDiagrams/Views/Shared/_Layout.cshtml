@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidebars.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ViewDiagrams.styles.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+
 </head>
 <body>
     <environment include="Development">
