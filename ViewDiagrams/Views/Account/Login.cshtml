@@ -1,0 +1,58 @@
+﻿@model LoginViewModel
+
+<section class="h-100 my-login-page">
+	<div class="container h-100">
+		<div class="row justify-content-md-center h-100">
+			<div class="card-wrapper">
+				<div class="brand">
+					<img src="img/logo.jpg" alt="logo">
+				</div>
+				<div class="card fat">
+					<div class="card-body">
+						<h4 class="card-title">Login</h4>
+
+						@if (TempData["Error"] != null)
+						{
+							<div class="alert alert-danger">
+								@TempData["Error"]
+							</div>
+						}
+
+						<form asp-controller="Account" asp-action="Login" class="my-login-validation">
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+							<div class="form-group">
+								<label asp-for="Email">E-Mail Address</label>
+								<input asp-for="Email" type="email" class="form-control">
+								<span asp-validation-for="Email" class="text-danger"></span>
+							</div>
+
+							<div class="form-group">
+								<label asp-for="Password">Password</label>
+								<input asp-for="Password" type="password" class="form-control">
+								<span asp-validation-for="Password" class="text-danger"></span>
+							</div>
+
+							<div class="form-group">
+								<div class="custom-checkbox custom-control">
+									<input asp-for="RememberPassword" type="checkbox" class="custom-control-input">
+									<label asp-for="RememberPassword" class="custom-control-label">Remember Me</label>
+								</div>
+							</div>
+
+							<div class="form-group m-0">
+								<button type="submit" class="btn btn-primary btn-block">Login</button>
+							</div>
+							<div class="mt-4 text-center">
+								Don't have an account? <a href="/Account/Register">Create One</a>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="footer">
+					Copyright &copy; 2017 &mdash; Your Company
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

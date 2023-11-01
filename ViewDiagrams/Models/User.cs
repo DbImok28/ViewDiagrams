@@ -1,15 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace ViewDiagrams.Models
 {
-    public class User
-    {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Mail { get; set; }
-        public string Password { get; set; }
-
-        public ICollection<Workspace> Workspaces { get; set; }
-    }
+	public class User : IdentityUser<int>
+	{
+		public virtual ICollection<Workspace> Workspaces { get; set; }
+		public virtual ICollection<WorkspaceUser> WorkspaceUsers { get; set; }
+	}
 }

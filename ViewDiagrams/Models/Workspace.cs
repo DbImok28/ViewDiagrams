@@ -9,10 +9,11 @@ namespace ViewDiagrams.Models
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<WorkspaceUser> WorkspaceUsers { get; set; }
 
         [ForeignKey("Settings")]
         public int SettingsId { get; set; }
-        public Settings Settings { get; set; }
+        public virtual Settings Settings { get; set; }
     }
 }
