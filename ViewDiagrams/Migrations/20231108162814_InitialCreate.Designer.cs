@@ -12,7 +12,7 @@ using ViewDiagrams.Models;
 namespace ViewDiagrams.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231101151846_InitialCreate")]
+    [Migration("20231108162814_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -158,52 +158,6 @@ namespace ViewDiagrams.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ViewDiagrams.Models.AccessSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Test")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("UseTest")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("UseTest2")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AccessSettings");
-                });
-
-            modelBuilder.Entity("ViewDiagrams.Models.Settings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccessSettingsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkspaceSettingsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccessSettingsId");
-
-                    b.HasIndex("WorkspaceSettingsId");
-
-                    b.ToTable("Settings");
-                });
-
             modelBuilder.Entity("ViewDiagrams.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -284,31 +238,19 @@ namespace ViewDiagrams.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SettingsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SettingsId");
-
-                    b.ToTable("Workspaces");
-                });
-
-            modelBuilder.Entity("ViewDiagrams.Models.WorkspaceSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Test")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("UseTest")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UseTest2")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("WorkspaceSettings");
+                    b.ToTable("Workspaces");
                 });
 
             modelBuilder.Entity("ViewDiagrams.Models.WorkspaceUser", b =>
@@ -375,36 +317,6 @@ namespace ViewDiagrams.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ViewDiagrams.Models.Settings", b =>
-                {
-                    b.HasOne("ViewDiagrams.Models.AccessSettings", "AccessSettings")
-                        .WithMany()
-                        .HasForeignKey("AccessSettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ViewDiagrams.Models.WorkspaceSettings", "WorkspaceSettings")
-                        .WithMany()
-                        .HasForeignKey("WorkspaceSettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AccessSettings");
-
-                    b.Navigation("WorkspaceSettings");
-                });
-
-            modelBuilder.Entity("ViewDiagrams.Models.Workspace", b =>
-                {
-                    b.HasOne("ViewDiagrams.Models.Settings", "Settings")
-                        .WithMany()
-                        .HasForeignKey("SettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Settings");
                 });
 
             modelBuilder.Entity("ViewDiagrams.Models.WorkspaceUser", b =>

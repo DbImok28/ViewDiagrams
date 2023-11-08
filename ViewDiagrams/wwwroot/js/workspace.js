@@ -6,9 +6,9 @@ function GetAllInputFieldsAsJson() {
     let settingsAsJson = '{'
     let settingsPages = document.querySelectorAll('div[id^="settings-"]')
     for (let i = 0; i < settingsPages.length; i++) {
-        let pageName = settingsPages[i].id.substring("settings-".length)
+        //let pageName = settingsPages[i].id.substring("settings-".length)
 
-        settingsAsJson += `"${pageName}":{`
+        //settingsAsJson += `"${pageName}":{`
         let inputs = settingsPages[i].querySelectorAll('*[id^="input-"]')
 
         for (let j = 0; j < inputs.length; j++) {
@@ -26,7 +26,7 @@ function GetAllInputFieldsAsJson() {
             settingsAsJson += `"${inputName}":${inputValue}`
             if (j < inputs.length - 1) settingsAsJson += ','
         }
-        settingsAsJson += '}'
+        //settingsAsJson += '}'
         if (i < settingsPages.length - 1) settingsAsJson += ','
     }
     settingsAsJson += '}'
@@ -37,13 +37,14 @@ function SetAllInputFieldsFromJson(jsonSettings) {
     let settings = JSON.parse(jsonSettings)
     let settingsPages = document.querySelectorAll('div[id^="settings-"]')
     for (let i = 0; i < settingsPages.length; i++) {
-        let pageName = settingsPages[i].id.substring("settings-".length)
-        let settingsPage = settings[pageName]
+        //let pageName = settingsPages[i].id.substring("settings-".length)
+        //let settingsPage = settings[pageName]
 
         let inputs = settingsPages[i].querySelectorAll('*[id^="input-"]')
         for (let j = 0; j < inputs.length; j++) {
             let inputName = inputs[j].id.substring("input-".length)
-            let inputValue = settingsPage[inputName]
+            /*let inputValue = settingsPage[inputName]*/
+            let inputValue = settings[inputName]
 
             if (inputs[j].type === "checkbox") {
                 inputs[j].checked = inputValue
@@ -110,23 +111,9 @@ connection.on("Update", function (newData) {
 
 connection.start().then(function () {
     console.log("start")
-
-    JoinToWorkspace("1234")
-
-    //connection.invoke("Join", "1234")
-    //    .then(function () {
-    //        console.log("join")
-    //        connection.invoke("Pull")
-    //            .then(function () {
-    //                console.log("pull")
-    //            })
-    //            .catch(function (err) {
-    //                return console.error(err.toString())
-    //            })
-    //    })
-    //    .catch(function (err) {
-    //        return console.error(err.toString())
-    //    })
+    console.log(autoConnectWorkspaceId)
+    if (typeof autoConnectWorkspaceId !== undefined)
+        JoinToWorkspace(autoConnectWorkspaceId.toString())
 
 }).catch(function (err) {
     return console.error(err.toString())

@@ -12,21 +12,6 @@ namespace ViewDiagrams.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AccessSettings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Test = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UseTest = table.Column<bool>(type: "bit", nullable: false),
-                    UseTest2 = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccessSettings", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -68,16 +53,19 @@ namespace ViewDiagrams.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WorkspaceSettings",
+                name: "Workspaces",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Test = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UseTest = table.Column<bool>(type: "bit", nullable: false),
+                    UseTest2 = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkspaceSettings", x => x.Id);
+                    table.PrimaryKey("PK_Workspaces", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,52 +175,6 @@ namespace ViewDiagrams.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Settings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AccessSettingsId = table.Column<int>(type: "int", nullable: false),
-                    WorkspaceSettingsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Settings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Settings_AccessSettings_AccessSettingsId",
-                        column: x => x.AccessSettingsId,
-                        principalTable: "AccessSettings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Settings_WorkspaceSettings_WorkspaceSettingsId",
-                        column: x => x.WorkspaceSettingsId,
-                        principalTable: "WorkspaceSettings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Workspaces",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SettingsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Workspaces", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Workspaces_Settings_SettingsId",
-                        column: x => x.SettingsId,
-                        principalTable: "Settings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "WorkspaceUsers",
                 columns: table => new
                 {
@@ -296,21 +238,6 @@ namespace ViewDiagrams.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_AccessSettingsId",
-                table: "Settings",
-                column: "AccessSettingsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Settings_WorkspaceSettingsId",
-                table: "Settings",
-                column: "WorkspaceSettingsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Workspaces_SettingsId",
-                table: "Workspaces",
-                column: "SettingsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WorkspaceUsers_UserId",
                 table: "WorkspaceUsers",
                 column: "UserId");
@@ -345,15 +272,6 @@ namespace ViewDiagrams.Migrations
 
             migrationBuilder.DropTable(
                 name: "Workspaces");
-
-            migrationBuilder.DropTable(
-                name: "Settings");
-
-            migrationBuilder.DropTable(
-                name: "AccessSettings");
-
-            migrationBuilder.DropTable(
-                name: "WorkspaceSettings");
         }
     }
 }

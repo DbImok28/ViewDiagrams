@@ -29,5 +29,7 @@
         <script src="~/lib/signalr/dist/signalr.min.js"></script>
     </environment>
     <script src="~/js/sidebars.js" asp-append-version="true"></script>
+
+    <script> var autoConnectWorkspaceId = @ViewBag.Workspace.Id; </script>
     <script src="~/js/workspace.js" asp-append-version="true"></script>
 }

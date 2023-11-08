@@ -7,13 +7,13 @@ namespace ViewDiagrams.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = "Blank workspace";
 
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<WorkspaceUser> WorkspaceUsers { get; set; }
 
-        [ForeignKey("Settings")]
-        public int SettingsId { get; set; }
-        public virtual Settings Settings { get; set; }
+        public string Test { get; set; } = "test";
+        public bool UseTest { get; set; } = false;
+        public int UseTest2 { get; set; } = 0;
     }
 }

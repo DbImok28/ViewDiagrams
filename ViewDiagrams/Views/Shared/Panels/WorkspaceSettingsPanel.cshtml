@@ -7,7 +7,7 @@
             </button>
             <div class="collapse show" id="workspace-settings-collapse" style="">
 
-                @await Html.PartialAsync("Templates/InputField", new InputField("Name", ViewBag.Settings.WorkspaceSettings.Name))
+                @await Html.PartialAsync("Templates/InputField", new InputField("Name", ViewBag.Workspace.Name))
                 @* <div class="col-md mt-2">
                     <div class="form-floating">
                         <input type="email" class="form-control" id="floatingInputGrid" placeholder="Workspace name" value="Empty Workspace">

@@ -1,13 +1,11 @@
 ﻿@using System.Security.Claims;
+
 <div class="d-flex flex-row align-items-center border-bottom up-panel">
-	@* <i class="bi bi-people fs-4"></i> *@
 	<button class="p-4 btn" style="background-color:transparent" onclick="SinkWorkspace()">
 		<i class="bi bi-save fs-4"></i>
 		Save
 	</button>
-	@* <button class="bi bi-save fs-4 btn" onclick="console.log('c')">
-	Save
-	</button> *@
+
 	@* User *@
 	<div class="ms-auto dropdown pe-2">
 		<a href="#"
@@ -23,9 +21,9 @@
 				<li>
 					<div class="d-flex flex-row align-items-center ps-3">
 					<i class="bi bi-person-circle fs-2"></i>
-					<div>
-							<p class="dropdown-item m-0 pb-0">@User.FindFirst(ClaimTypes.Name)?.Value</p>
-							<p class="dropdown-item m-0 pb-0">@User.FindFirst(ClaimTypes.Email)?.Value</p>
+					<div class="m-2">
+							<p class="m-0 pb-0">@User.FindFirst(ClaimTypes.Name)?.Value</p>
+							<p class="m-0 pb-0">@User.FindFirst(ClaimTypes.Email)?.Value</p>
 						</div>
 					</div>
 				</li>
@@ -48,11 +46,4 @@
 			</li>
 		</ul>
 	</div>
-	@* <div class ="m-4"></div> *@
-	@* <div class="m-4"></div> *@
-	@* <div class="m-4"></div> *@
-
-	@* <div class="m-4"></div><div class ="m-4"></div>
-	<div class ="m-4"></div>
-	<div class="m-4"></div> *@
 </div>

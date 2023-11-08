@@ -1,77 +1,80 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ViewDiagrams.Hubs;
 using ViewDiagrams.Models;
+using ViewDiagrams.Models.Repository;
 
 namespace ViewDiagrams
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-			builder.Services.AddControllers(options =>
-			{
-				options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
-			});
-			builder.Services.AddControllersWithViews();
-			var s = builder.Configuration.GetConnectionString("DefaultConnection");
-			builder.Services.AddDbContext<ApplicationDbContext>(options =>
-			{
-				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-			});
+            builder.Services.AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
+            });
+            builder.Services.AddControllersWithViews();
+            var s = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
-			builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
-			{
-				options.Password.RequireDigit = false;
-				options.Password.RequireLowercase = false;
-				options.Password.RequireUppercase = false;
-				options.Password.RequireNonAlphanumeric = false;
-				options.Password.RequiredLength = 1;
+            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 1;
 
-				options.SignIn.RequireConfirmedEmail = false;
-				options.SignIn.RequireConfirmedAccount = false;
-				options.User.RequireUniqueEmail = true;
-			}).AddEntityFrameworkStores<ApplicationDbContext>();
-			builder.Services.AddMemoryCache();
-			builder.Services.AddSession();
-			builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-				.AddCookie();
-			//builder.Services.AddDefaultIdentity<User>()
-			//    .AddEntityFrameworkStores<ApplicationDbContext>();
-			//builder.Services.AddIdentity<User, IdentityRole>(options =>
-			//{
-			//    options.User.RequireUniqueEmail = false;
-			//});
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddSession();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
-			builder.Services.AddSignalR();
+            //builder.Services.AddDefaultIdentity<User>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            //builder.Services.AddIdentity<User, IdentityRole>(options =>
+            //{
+            //    options.User.RequireUniqueEmail = false;
+            //});
 
-			var app = builder.Build();
+            builder.Services.AddSignalR();
 
-			// Configure the HTTP request pipeline.
-			if (!app.Environment.IsDevelopment())
-			{
-				app.UseExceptionHandler("/Home/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
-			}
+            var app = builder.Build();
 
-			app.UseHttpsRedirection();
-			app.UseStaticFiles();
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
 
-			app.UseRouting();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
-			app.UseAuthorization();
+            app.UseRouting();
 
-			app.MapControllerRoute(
-				name: "default",
-				pattern: "{controller=WorkSpace}/{action=Index}/{id?}");
+            app.UseAuthorization();
 
-			app.MapHub<WorkspaceHub>("/api/workspace");
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=WorkSpace}/{action=Index}");
 
-			app.Run();
-		}
-	}
+            app.MapHub<WorkspaceHub>("/api/workspace");
+
+            app.Run();
+        }
+    }
 }

@@ -33,8 +33,6 @@ namespace ViewDiagrams.Models
 		}
 
 		public DbSet<WorkspaceUser> WorkspaceUsers { get; set; }
-		public DbSet<AccessSettings> AccessSettings { get; set; }
-		public DbSet<Settings> Settings { get; set; }
 		public DbSet<Workspace> Workspaces { get; set; }
 	}
 }
