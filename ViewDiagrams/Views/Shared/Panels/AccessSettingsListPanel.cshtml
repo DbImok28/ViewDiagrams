@@ -8,6 +8,8 @@
 
 
             <div class="collapse show" id="users-collapse" style="">
+                @await Html.PartialAsync("Templates/CheckBox", new CheckBox("IsPublic", ViewBag.Workspace.IsPublic))
+
                 @await Html.PartialAsync("Templates/InputField", new InputField("Test", ViewBag.Workspace.Test))
                 @await Html.PartialAsync("Templates/CheckBox", new CheckBox("UseTest", ViewBag.Workspace.UseTest))
                 @await Html.PartialAsync("Templates/Selector", new Selector("UseTest2", new List<string>(){"one", "two"}))

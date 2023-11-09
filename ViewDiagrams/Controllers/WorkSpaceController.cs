@@ -23,17 +23,35 @@ namespace ViewDiagrams.Controllers
 
         public IActionResult Index(int? id)
         {
-            Workspace workspace;
-            if (id != null)
-            {
-                workspace = _workspaceRepository.GetWorkspace(id.Value) ?? new Workspace();
-            }
-            else
-            {
-                workspace = new Workspace();
-            }
+            if (id == null) return RedirectToAction(nameof(Create), nameof(WorkspaceController).Replace("Controller", ""));
+
+            var workspace = _workspaceRepository.GetWorkspace(id.Value);
+            if (workspace == null) return WorkspaceNotExist();
             ViewBag.Workspace = workspace;
+
+            var role = _workspaceRepository.GetUserRole(User, workspace.Id);
+            if (role == WorkspaceUserRole.Guest)
+            {
+                if (workspace.IsPublic)
+                {
+                    ViewBag.IsGuest = true;
+                    ViewBag.IsAdmin = false;
+                    return View();
+                }
+                else
+                {
+                    return WorkspaceNotExist();
+                }
+            }
+            ViewBag.IsGuest = false;
+            ViewBag.IsAdmin = role == WorkspaceUserRole.Admin;
             return View();
+        }
+
+        [NonAction]
+        public IActionResult WorkspaceNotExist()
+        {
+            return View(nameof(UserError), "This workspace does not exist or access is not available.");
         }
 
         public IActionResult Create()
@@ -42,15 +60,19 @@ namespace ViewDiagrams.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateWorkspaceViewModel model)
+        public IActionResult Create(CreateWorkspaceViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var workspaceId = _workspaceRepository.Create(model.Name, User.GetUserId());
-            return RedirectToAction(nameof(Index), nameof(WorkspaceController).Replace("Controller", ""));
+            return RedirectToAction(nameof(Index), nameof(WorkspaceController).Replace("Controller", ""), new { id = workspaceId });
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult UserError()
         {
             return View();
         }

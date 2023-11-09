@@ -28,11 +28,6 @@ namespace ViewDiagrams.Hubs
             throw new HubException("The user is not connected to the workspace");
         }
 
-        public void CheckAccessToWorkspace(int workspaceId)
-        {
-            if (Context.User != null && !_workspaceRepository.CheckAccessToWorkspace(Context.User.GetUserId(), Convert.ToInt32(workspaceId))) throw new HubException("Access is denied");
-        }
-
         public Workspace GetWorkspace(int workspaceId)
         {
             Workspace? workspace = _workspaceRepository.GetWorkspace(workspaceId);
@@ -40,12 +35,21 @@ namespace ViewDiagrams.Hubs
             return workspace;
         }
 
+        public void CheckPrivateAccess(int workspaceId)
+        {
+            if (Context.User == null || _workspaceRepository.IsGuest(Context.User, workspaceId)) throw new HubException("Access is denied");
+        }
+
+        public void CheckPublicAccess(Workspace workspace)
+        {
+            if ((Context.User == null || _workspaceRepository.IsGuest(Context.User, workspace.Id))
+                && !workspace.IsPublic) throw new HubException("Access is denied");
+        }
+
         public async Task Sink(string data)
         {
             int workspaceId = GetWorkspaceId();
-
-            // TODO: Store workspace
-            //Workspace workspace = GetWorkspace(workspaceId);
+            CheckPrivateAccess(workspaceId);
 
             var newWorkspace = JsonSerializer.Deserialize<Workspace>(data.ToString());
             if (newWorkspace == null) return;
@@ -60,8 +64,6 @@ namespace ViewDiagrams.Hubs
         public async Task Pull()
         {
             int workspaceId = GetWorkspaceId();
-
-            // TODO: Load workspace
             Workspace workspace = GetWorkspace(workspaceId);
 
             string settingsAsJson = JsonSerializer.Serialize(workspace);
@@ -72,15 +74,14 @@ namespace ViewDiagrams.Hubs
 
         public async Task Join(string newWorkspaceId)
         {
-            // TODO: Check workspace access
             await Leave();
 
             int workspaceId = Convert.ToInt32(newWorkspaceId);
-            CheckAccessToWorkspace(workspaceId);
+            Workspace workspace = GetWorkspace(workspaceId);
+            CheckPublicAccess(workspace);
 
             Context.Items["WorkspaceId"] = workspaceId;
             await Groups.AddToGroupAsync(Context.ConnectionId, workspaceId.ToString());
-
         }
 
         public async Task Leave()
