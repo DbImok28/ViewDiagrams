@@ -17,5 +17,18 @@ namespace ViewDiagrams.Models
         public string Test { get; set; } = "test";
         public bool UseTest { get; set; } = false;
         public int UseTest2 { get; set; } = 0;
+
+        public Workspace Update(Workspace newWorkspace, bool isAdmin)
+        {
+            Name = newWorkspace.Name;
+            if (!isAdmin)
+            {
+                newWorkspace.IsPublic = IsPublic;
+                newWorkspace.Test = Test;
+                newWorkspace.UseTest = UseTest;
+                newWorkspace.UseTest2 = UseTest2;
+            }
+            return newWorkspace;
+        }
     }
 }

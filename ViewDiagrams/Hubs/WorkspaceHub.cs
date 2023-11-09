@@ -35,9 +35,15 @@ namespace ViewDiagrams.Hubs
             return workspace;
         }
 
-        public void CheckPrivateAccess(int workspaceId)
+        public WorkspaceUserRole GetUserRole(int workspaceId)
         {
-            if (Context.User == null || _workspaceRepository.IsGuest(Context.User, workspaceId)) throw new HubException("Access is denied");
+            if (Context.User == null) return WorkspaceUserRole.Guest;
+            return _workspaceRepository.GetUserRole(Context.User, workspaceId);
+        }
+
+        public void CheckPrivateAccess(WorkspaceUserRole role)
+        {
+            if (role == WorkspaceUserRole.Guest) throw new HubException("Access is denied");
         }
 
         public void CheckPublicAccess(Workspace workspace)
@@ -49,10 +55,15 @@ namespace ViewDiagrams.Hubs
         public async Task Sink(string data)
         {
             int workspaceId = GetWorkspaceId();
-            CheckPrivateAccess(workspaceId);
+            var role = GetUserRole(workspaceId);
+
+            CheckPrivateAccess(role);
 
             var newWorkspace = JsonSerializer.Deserialize<Workspace>(data.ToString());
             if (newWorkspace == null) return;
+
+            var workspace = GetWorkspace(workspaceId);
+            workspace.Update(newWorkspace, role == WorkspaceUserRole.Admin);
 
             newWorkspace.Id = workspaceId;
 

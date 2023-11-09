@@ -21,7 +21,16 @@ namespace ViewDiagrams.Models.Repository
 
         public void UpdateWorkspace(Workspace workspace)
         {
-            _context.Workspaces.Update(workspace);
+            //try
+            //{
+            //    _context.Workspaces.Update(workspace);
+
+            //}
+            //catch (Exception e)
+            //{
+
+            //    throw;
+            //}
             _context.SaveChanges();
         }
 
