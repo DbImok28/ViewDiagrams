@@ -119,7 +119,7 @@ function RegenerateDiagram(index) {
 }
 
 // Diagram properties generation
-
+let uniqueInputFieldId = 0
 function GenerateTextField(fieldName, fieldValue, sourceObject) {
     const container = document.createElement('div')
     container.classList.add('col-md', 'mt-1')
@@ -127,9 +127,11 @@ function GenerateTextField(fieldName, fieldValue, sourceObject) {
     const formContainer = document.createElement('div')
     formContainer.classList.add('form-floating');
 
+    const inputId = `input-u${++uniqueInputFieldId}`
+
     const input = document.createElement('input')
     input.classList.add('form-control')
-    input.id = `input-${fieldName}`
+    input.id = inputId
     input.value = fieldValue.toString()
     input.oninput = function () {
         sourceObject[fieldName] = input.value
@@ -138,7 +140,7 @@ function GenerateTextField(fieldName, fieldValue, sourceObject) {
     }
 
     const label = document.createElement('label')
-    label.htmlFor = `input-${fieldName}`
+    label.htmlFor = inputId
     label.innerText = fieldName
 
     container.appendChild(formContainer)
