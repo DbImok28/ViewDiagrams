@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Security.Claims;
-using System.Security.Permissions;
+﻿using System.Security.Claims;
 using ViewDiagrams.Models.Helpers;
 
 namespace ViewDiagrams.Models.Repository
@@ -19,18 +17,8 @@ namespace ViewDiagrams.Models.Repository
             return _context.Workspaces.SingleOrDefault(x => x.Id == workspaceId);
         }
 
-        public void UpdateWorkspace(Workspace workspace)
+        public void SaveChanges()
         {
-            //try
-            //{
-            //    _context.Workspaces.Update(workspace);
-
-            //}
-            //catch (Exception e)
-            //{
-
-            //    throw;
-            //}
             _context.SaveChanges();
         }
 

@@ -6,7 +6,6 @@
 }
 
 .work-space {
-    /*background-color: #d3d3d3;*/
     --work-space-width: 2000px;
     --work-space-height: 2000px;
     text-align: center;
@@ -15,11 +14,7 @@
     z-index: 5;
     /**/
     position: absolute;
-    /*border-color: rgb(255, 255, 255);*/
-    /*border-style: solid;*/
-    /*background-color: rgb(255, 255, 255);*/
     background-image: url(../icons/grid.svg);
-    /*background-position: -1px -1px;*/
 }
 
 .draggable {
@@ -36,4 +31,5 @@
     /*z-index: 1;*/
     background-color: #2196f3;
     color: #fff;
+    min-width: 159px;
 }

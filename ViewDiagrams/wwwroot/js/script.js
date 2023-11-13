@@ -15,7 +15,24 @@ function makeWorkSpace(work_space) {
 
     function onClick(e) {
         let dragElem = e.target
-        if (dragElem.className === "draggable-header") startDragMove(e, dragElem.closest('.draggable'))
+        if (dragElem.className === "draggable-header") {
+            let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
+            GenerateDetailsPanelById(diagramId)
+            startDragMove(e, dragElem.closest('.draggable'), (elem, pos) => {
+                setElementPosition(elem, getPosOnGrid(pos))
+            },
+                (elem, pos) => {
+                    let diagram = GetDiagramById(diagramId)
+                    let gridPos = getPosOnGrid(pos)
+                    if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
+                        diagram.Position.X = pos.x
+                        diagram.Position.Y = pos.y
+                        UpateJsonDocumentViewer()
+                        RegenerateDetailsPanel()
+                    }
+                },
+            )
+        }
         else if (!dragElem.closest('.draggable')) startDragScroll(e, work_space_view)
     }
 }
@@ -31,6 +48,21 @@ function setScrollAtCenter(work_space_view, work_space) {
     work_space_view.scrollTo(width / 2 - clientWidth / 2, height / 2 - clientHeight / 2)
 }
 
+let gridSnap = 10;
+function getPosOnGrid(pos) {
+    //setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
+    return {
+        x: Math.round(pos.x / gridSnap) * gridSnap,
+        y: Math.round(pos.y / gridSnap) * gridSnap
+    }
+}
+
+function setElementPosition(elem, pos) {
+    elem.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+}
+
+// Drag move
+
 function getTranslateXY(elem) {
     const style = window.getComputedStyle(elem)
     const matrix = new DOMMatrixReadOnly(style.transform)
@@ -40,16 +72,7 @@ function getTranslateXY(elem) {
     }
 }
 
-function moveOnGrid(elem, pos) {
-    let gridSnap = 10;
-    setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
-}
-
-function setElementPosition(elem, x, y) {
-    elem.style.transform = `translate(${x}px, ${y}px)`;
-}
-
-function startDragMove(e, elem) {
+function startDragMove(e, elem, onMoveFunc, onEndMove) {
     e.preventDefault()
 
 
@@ -75,14 +98,17 @@ function startDragMove(e, elem) {
         elemPos.x = elemPos.x - dx;
         elemPos.y = elemPos.y - dy;
 
-        moveOnGrid(elem, elemPos)
+        onMoveFunc(elem, elemPos)
     }
 
     function closeDragElement() {
         document.onmouseup = null
         document.onmousemove = null
+        onEndMove(elem, elemPos)
     }
 }
+
+// Drag scroll
 
 function startDragScroll(e, elem) {
     elem.style.cursor = 'grabbing'

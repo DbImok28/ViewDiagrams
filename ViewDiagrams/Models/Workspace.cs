@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ViewDiagrams.Models
 {
@@ -9,7 +9,9 @@ namespace ViewDiagrams.Models
         public int Id { get; set; }
         public string Name { get; set; } = "Blank workspace";
 
+        [JsonIgnore]
         public virtual ICollection<User> Users { get; set; }
+        [JsonIgnore]
         public virtual ICollection<WorkspaceUser> WorkspaceUsers { get; set; }
 
         public bool IsPublic { get; set; } = false;

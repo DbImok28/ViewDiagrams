@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
 using ViewDiagrams.Models;
-using ViewDiagrams.Models.Helpers;
 using ViewDiagrams.Models.Repository;
 
 namespace ViewDiagrams.Hubs
@@ -11,12 +8,10 @@ namespace ViewDiagrams.Hubs
     public class WorkspaceHub : Hub
     {
         private readonly WorkspaceRepository _workspaceRepository;
-        private readonly UserManager<User> _userManager;
 
-        public WorkspaceHub(ApplicationDbContext context, UserManager<User> userManager)
+        public WorkspaceHub(ApplicationDbContext context)
         {
             _workspaceRepository = new WorkspaceRepository(context);
-            _userManager = userManager;
         }
 
         public int GetWorkspaceId()
@@ -67,9 +62,8 @@ namespace ViewDiagrams.Hubs
 
             newWorkspace.Id = workspaceId;
 
-            _workspaceRepository.UpdateWorkspace(newWorkspace);
+            _workspaceRepository.SaveChanges();
             await Clients.OthersInGroup(workspaceId.ToString()).SendAsync("Update", data);
-
         }
 
         public async Task Pull()
@@ -77,10 +71,12 @@ namespace ViewDiagrams.Hubs
             int workspaceId = GetWorkspaceId();
             Workspace workspace = GetWorkspace(workspaceId);
 
+            //CheckPublicAccess(workspace);
+
             string settingsAsJson = JsonSerializer.Serialize(workspace);
             if (settingsAsJson == null) return;
-
             await Clients.Caller.SendAsync("Update", settingsAsJson);
+
         }
 
         public async Task Join(string newWorkspaceId)
@@ -89,6 +85,7 @@ namespace ViewDiagrams.Hubs
 
             int workspaceId = Convert.ToInt32(newWorkspaceId);
             Workspace workspace = GetWorkspace(workspaceId);
+
             CheckPublicAccess(workspace);
 
             Context.Items["WorkspaceId"] = workspaceId;

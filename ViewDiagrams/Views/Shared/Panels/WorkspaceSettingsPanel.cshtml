@@ -6,14 +6,16 @@
                 Workspace settings
             </button>
             <div class="collapse show" id="workspace-settings-collapse" style="">
-
                 @await Html.PartialAsync("Templates/InputField", new InputField("Name", ViewBag.Workspace.Name))
-                @* <div class="col-md mt-2">
-                    <div class="form-floating">
-                        <input type="email" class="form-control" id="floatingInputGrid" placeholder="Workspace name" value="Empty Workspace">
-                        <label for="floatingInputGrid">Workspace name</label>
-                    </div>
-                </div> *@
+            </div>
+
+            <button class="btn btn-toggle align-items-center rounded" data-bs-toggle="collapse"
+                    data-bs-target="#workspace-document-collapse" aria-expanded="true">
+                Document
+            </button>
+            <div class="collapse show" id="workspace-document-collapse" style="">
+                <label for="json-document-viewer" class="form-label">Document as Json</label>
+                <textarea class="form-control" id="json-document-viewer" rows="20" style="font-size: 0.8rem;"></textarea>
             </div>
         </li>
     </ul>
