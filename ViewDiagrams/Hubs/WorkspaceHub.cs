@@ -47,23 +47,38 @@ namespace ViewDiagrams.Hubs
                 && !workspace.IsPublic) throw new HubException("Access is denied");
         }
 
-        public async Task Sink(string data)
+        public async Task Sink(string data, string documentInJson)
         {
             int workspaceId = GetWorkspaceId();
             var role = GetUserRole(workspaceId);
 
             CheckPrivateAccess(role);
 
-            var newWorkspace = JsonSerializer.Deserialize<Workspace>(data.ToString());
+            Workspace? newWorkspace;
+            try
+            {
+                newWorkspace = JsonSerializer.Deserialize<Workspace>(data.ToString());
+            }
+            catch (JsonException e)
+            {
+                throw new HubException(e.Message);
+            }
             if (newWorkspace == null) return;
+            newWorkspace.DocumentInJson = documentInJson;
 
             var workspace = GetWorkspace(workspaceId);
             workspace.Update(newWorkspace, role == WorkspaceUserRole.Admin);
 
             newWorkspace.Id = workspaceId;
-
-            _workspaceRepository.SaveChanges();
-            await Clients.OthersInGroup(workspaceId.ToString()).SendAsync("Update", data);
+            try
+            {
+                _workspaceRepository.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw new HubException(e.Message);
+            }
+            await Clients.OthersInGroup(workspaceId.ToString()).SendAsync("Update", data, documentInJson);
         }
 
         public async Task Pull()
@@ -75,7 +90,7 @@ namespace ViewDiagrams.Hubs
 
             string settingsAsJson = JsonSerializer.Serialize(workspace);
             if (settingsAsJson == null) return;
-            await Clients.Caller.SendAsync("Update", settingsAsJson);
+            await Clients.Caller.SendAsync("Update", settingsAsJson, workspace.DocumentInJson);
 
         }
 

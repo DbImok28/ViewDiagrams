@@ -48,7 +48,10 @@ namespace ViewDiagrams.Models.Repository
             if (claims.Identity == null || !claims.Identity.IsAuthenticated)
                 return WorkspaceUserRole.Guest;
 
-            var workspaceUser = GetWorkspaceUser(claims.GetUserId(), workspaceId);
+            var userId = claims.GetUserId();
+            if (userId == null) return WorkspaceUserRole.Guest;
+
+            var workspaceUser = GetWorkspaceUser(userId.Value, workspaceId);
             if (workspaceUser == null) return WorkspaceUserRole.Guest;
 
             if (workspaceUser.IsAdmin) return WorkspaceUserRole.Admin;

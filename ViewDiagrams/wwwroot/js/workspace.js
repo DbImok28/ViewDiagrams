@@ -2,43 +2,56 @@
 
 let workspaceDocument = {
     "Diagrams": [
-        {
-            "Type": "ClassDiagram",
-            "Name": "Class_1",
-            "Properties": [
-                {
-                    "Name": "Prop 1",
-                    "AccessModifier": "Public"
-                },
-                {
-                    "Name": "Prop 2",
-                    "AccessModifier": "Public"
-                }
-            ],
 
-            "Position": { "X": "10", "Y": "20" },
-
-            "Element": null
-        },
-        {
-            "Type": "ClassDiagram",
-            "Name": "Class_2",
-            "Properties": [
-                {
-                    "Name": "Prop 3",
-                    "AccessModifier": "Public"
-                },
-                {
-                    "Name": "Prop 4",
-                    "AccessModifier": "Public"
-                }
-            ],
-
-            "Position": { "X": "80", "Y": "120" },
-
-            "Element": null
-        }
     ]
+}
+
+function SetDefaultWorkspace() {
+    workspaceDocument = {
+        "Diagrams": [
+            {
+                "Type": "ClassDiagram",
+                "Name": "Class_1",
+                "Properties": [
+                    {
+                        "Name": "Prop 1",
+                        "AccessModifier": "Public"
+                    },
+                    {
+                        "Name": "Prop 2",
+                        "AccessModifier": "Public"
+                    }
+                ],
+                "Attributes": [
+                    "Attribute 1",
+                    "Attribute 2"
+                ],
+
+                "Position": { "X": "10", "Y": "20" },
+
+                "Element": null
+            },
+            {
+                "Type": "ClassDiagram",
+                "Name": "Class_2",
+                "Properties": [
+                    {
+                        "Name": "Prop 3",
+                        "AccessModifier": "Public"
+                    },
+                    {
+                        "Name": "Prop 4",
+                        "AccessModifier": "Public"
+                    }
+                ],
+
+                "Position": { "X": "80", "Y": "120" },
+
+                "Element": null
+            }
+        ]
+    }
+    RegenerateDiagrams()
 }
 
 function AddDiagram(diagram) {
@@ -86,9 +99,26 @@ function GenerateClassDiagram(params) {
     return diagram
 }
 
+function GenerateClassDiagramProperty(propName) {
+    if (propName == "Properties") {
+        return {
+            "Name": "New property",
+            "AccessModifier": "Public"
+        }
+    }
+    return undefined
+}
+
 function GenerateDiagram(params) {
     switch (params.Type) {
         case "ClassDiagram": return GenerateClassDiagram(params)
+        default:
+    }
+}
+
+function GetGeneratePropertyFunc(diagramType) {
+    switch (diagramType) {
+        case "ClassDiagram": return GenerateClassDiagramProperty
         default:
     }
 }
@@ -151,35 +181,70 @@ function GenerateTextField(fieldName, fieldValue, sourceObject) {
 
 // List
 
-function GenerateListHeader(name) {
+function GenerateListHeader(name, items, genPropetyFunc) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
 
     const li = document.createElement('li')
-    li.classList.add('list-group-item')
-    li.innerText = name
+    li.classList.add('list-group-item', 'd-flex', 'flex-row')
+
+    const p = document.createElement('p')
+    p.classList.add('mb-0')
+    p.innerText = name
+    li.appendChild(p)
+
+    const addButton = document.createElement('button')
+    addButton.classList.add('btn', 'p-0', 'ms-auto')
+    addButton.onclick = function () {
+        let newProp = genPropetyFunc(name)
+        if (newProp !== undefined) {
+            items.push(newProp)
+            UpdateCurrentDiagram()
+        }
+    }
+
+    const addButtonIcon = document.createElement('i')
+    addButtonIcon.classList.add('bi', 'bi-plus-circle', 'fs-5')
+    addButton.appendChild(addButtonIcon)
+
+    li.appendChild(addButton)
+
     ul.appendChild(li)
     return ul
 }
 
-function GenerateListItem(item) {
+function GenerateListItem(itemElem, items, index) {
     const li = document.createElement('li')
-    li.classList.add('list-group-item')
-    li.appendChild(item)
+    li.classList.add('list-group-item', 'd-flex', 'flex-row')
+
+
+    const removeButton = document.createElement('button')
+    removeButton.classList.add('btn', 'p-0', 'border-0', 'mt-2', 'align-self-start')
+    removeButton.onclick = function () {
+        items.splice(index, 1);
+        UpdateCurrentDiagram()
+    }
+
+    const removeButtonIcon = document.createElement('i')
+    removeButtonIcon.classList.add('bi', 'bi-x', 'fs-5')
+    removeButton.appendChild(removeButtonIcon)
+
+    li.appendChild(itemElem)
+    li.appendChild(removeButton)
     return li
 }
 
-function GenerateListItems(name, items) {
-    let list = GenerateListHeader(name)
+function GenerateListItems(name, items, genPropetyFunc) {
+    let list = GenerateListHeader(name, items, genPropetyFunc)
     for (var i = 0; i < items.length; i++) {
-        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items)))
+        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, genPropetyFunc), items, i))
     }
     return list;
 }
 
 // Group
 
-function GenerateGroup(name, object) {
+function GenerateGroup(name, object, genPropetyFunc) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
 
@@ -192,7 +257,7 @@ function GenerateGroup(name, object) {
     propNames.forEach((propName) => {
         const li = document.createElement('li')
         li.classList.add('list-group-item')
-        li.appendChild(GenerateInputField(propName, object[propName], object))
+        li.appendChild(GenerateInputField(propName, object[propName], object, genPropetyFunc))
         ul.appendChild(li)
     })
     return ul
@@ -200,12 +265,12 @@ function GenerateGroup(name, object) {
 
 
 
-function GenerateInputField(name, value, sourceObject) {
+function GenerateInputField(name, value, sourceObject, genPropetyFunc) {
     if (typeof value === "string" || typeof value === "number") {
         return GenerateTextField(name, value, sourceObject)
     }
     else if (Array.isArray(value)) {
-        return GenerateListItems(name, value)
+        return GenerateListItems(name, value, genPropetyFunc)
     }
     else if (typeof value === "object") {
         return GenerateGroup(name, value)
@@ -217,12 +282,13 @@ function GenerateInputField(name, value, sourceObject) {
 let detailsPanel = document.getElementById("diagram-parameters")
 function GenerateDetailsPanel(diagram) {
     let elements = []
+    let genPropetyFunc = GetGeneratePropertyFunc(diagram["Type"])
     Object.getOwnPropertyNames(diagram).forEach((propName) => {
         if (propName === "Type") return
 
         let propValue = IgnoreWorkspacePrivateFields(propName, diagram[propName])
         if (propValue !== undefined)
-            elements.push(GenerateInputField(propName, propValue, diagram))
+            elements.push(GenerateInputField(propName, propValue, diagram, genPropetyFunc))
     })
     while (detailsPanel.firstChild) {
         detailsPanel.removeChild(detailsPanel.lastChild);
@@ -279,7 +345,17 @@ jsonDocumentViewer.oninput = () => {
 RegenerateDiagrams()
 UpateJsonDocumentViewer()
 
+function UpdateAllDiagrams() {
+    RegenerateDetailsPanel()
+    RegenerateDiagrams()
+    UpateJsonDocumentViewer()
+}
 
+function UpdateCurrentDiagram() {
+    RegenerateDetailsPanel()
+    RegenerateDiagram(currentSelectedDiagramIndex)
+    UpateJsonDocumentViewer()
+}
 
 
 // Serialize inputs fields
@@ -338,7 +414,7 @@ function SetAllInputFieldsFromJson(jsonSettings) {
 var connection = new signalR.HubConnectionBuilder().withUrl("/api/workspace").build()
 
 function SinkWorkspace() {
-    connection.invoke("Sink", GetAllInputFieldsAsJson())
+    connection.invoke("Sink", GetAllInputFieldsAsJson(), JSON.stringify(workspaceDocument, IgnoreWorkspacePrivateFields))
         .then(function () {
             console.log("sink")
         })
@@ -378,9 +454,15 @@ function LeaveFromWorkspace() {
         })
 }
 
-connection.on("Update", function (newData) {
+connection.on("Update", function (newData, jsonDocument) {
     console.log("update:" + newData)
     SetAllInputFieldsFromJson(newData)
+    workspaceDocument = JSON.parse(jsonDocument)
+    console.log("- doc:" + jsonDocument)
+
+    RegenerateDiagrams()
+    UpateJsonDocumentViewer()
+    RegenerateDetailsPanel()
 });
 
 connection.start().then(function () {

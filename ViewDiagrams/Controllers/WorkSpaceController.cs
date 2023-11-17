@@ -56,6 +56,8 @@ namespace ViewDiagrams.Controllers
 
         public IActionResult Create()
         {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+                return RedirectToAction(nameof(AccountController.Login), nameof(AccountController).Replace("Controller", ""));
             return View();
         }
 
@@ -64,7 +66,10 @@ namespace ViewDiagrams.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var workspaceId = _workspaceRepository.Create(model.Name, User.GetUserId());
+            var userId = User.GetUserId();
+            if (userId == null) return RedirectToAction(nameof(AccountController.Login), nameof(AccountController).Replace("Controller", ""));
+
+            var workspaceId = _workspaceRepository.Create(model.Name, userId.Value);
             return RedirectToAction(nameof(Index), nameof(WorkspaceController).Replace("Controller", ""), new { id = workspaceId });
         }
 
