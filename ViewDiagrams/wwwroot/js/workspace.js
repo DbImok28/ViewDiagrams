@@ -27,7 +27,7 @@ function SetDefaultWorkspace() {
                     "Attribute 2"
                 ],
 
-                "Position": { "X": "10", "Y": "20" },
+                "Position": { "X": "820", "Y": "750" },
 
                 "Element": null
             },
@@ -45,7 +45,7 @@ function SetDefaultWorkspace() {
                     }
                 ],
 
-                "Position": { "X": "80", "Y": "120" },
+                "Position": { "X": "1030", "Y": "1020" },
 
                 "Element": null
             }
@@ -56,26 +56,39 @@ function SetDefaultWorkspace() {
 
 function AddDiagram(diagram) {
     workspaceDocument.Diagrams.push(diagram)
-    UpateJsonDocumentViewer()
+    UpdateAllDiagrams()
 }
 
 function RemoveDiagram(diagram) {
     workspaceDocument.Diagrams.pop(diagram)
-    UpateJsonDocumentViewer()
-}
-
-function InsertRange(range, insertFunc) {
-    if (typeof range === undefined) return
-    let result = ''
-    for (var i = 0; i < range.length; i++) {
-        result += insertFunc(range[i])
-    }
-    return result
+    UpdateAllDiagrams()
 }
 
 function IgnoreWorkspacePrivateFields(key, value) {
-    if (key == "Element") return undefined;
-    else return value;
+    if (key == "Element") return undefined
+    else return value
+}
+
+function CreateDiagram(type, pos) {
+    switch (type) {
+        case "ClassDiagram": return {
+            "Type": "ClassDiagram",
+            "Name": "NewClass",
+            "Properties": [
+                {
+                    "Name": "New Property",
+                    "AccessModifier": "Public"
+                },
+            ],
+            "Attributes": [
+            ],
+
+            "Position": { "X": pos.x, "Y": pos.y },
+
+            "Element": null
+        }
+        default:
+    }
 }
 
 // Diagram generation
@@ -136,7 +149,7 @@ function RegenerateDiagrams() {
     }
 
     while (workspace.firstChild)
-        workspace.removeChild(workspace.lastChild);
+        workspace.removeChild(workspace.lastChild)
     elements.forEach((elem) => workspace.appendChild(elem))
 }
 
@@ -155,7 +168,7 @@ function GenerateTextField(fieldName, fieldValue, sourceObject) {
     container.classList.add('col-md', 'mt-1')
 
     const formContainer = document.createElement('div')
-    formContainer.classList.add('form-floating');
+    formContainer.classList.add('form-floating')
 
     const inputId = `input-u${++uniqueInputFieldId}`
 
@@ -221,7 +234,7 @@ function GenerateListItem(itemElem, items, index) {
     const removeButton = document.createElement('button')
     removeButton.classList.add('btn', 'p-0', 'border-0', 'mt-2', 'align-self-start')
     removeButton.onclick = function () {
-        items.splice(index, 1);
+        items.splice(index, 1)
         UpdateCurrentDiagram()
     }
 
@@ -239,7 +252,7 @@ function GenerateListItems(name, items, genPropetyFunc) {
     for (var i = 0; i < items.length; i++) {
         list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, genPropetyFunc), items, i))
     }
-    return list;
+    return list
 }
 
 // Group
@@ -282,16 +295,22 @@ function GenerateInputField(name, value, sourceObject, genPropetyFunc) {
 let detailsPanel = document.getElementById("diagram-parameters")
 function GenerateDetailsPanel(diagram) {
     let elements = []
-    let genPropetyFunc = GetGeneratePropertyFunc(diagram["Type"])
-    Object.getOwnPropertyNames(diagram).forEach((propName) => {
-        if (propName === "Type") return
+    if (diagram !== undefined) {
+        let properties = Object.getOwnPropertyNames(diagram)
+        if (properties.includes('Type')) {
+            let genPropetyFunc = GetGeneratePropertyFunc(diagram['Type'])
+            properties.forEach((propName) => {
+                if (propName === 'Type') return
 
-        let propValue = IgnoreWorkspacePrivateFields(propName, diagram[propName])
-        if (propValue !== undefined)
-            elements.push(GenerateInputField(propName, propValue, diagram, genPropetyFunc))
-    })
+                let propValue = IgnoreWorkspacePrivateFields(propName, diagram[propName])
+                if (propValue !== undefined)
+                    elements.push(GenerateInputField(propName, propValue, diagram, genPropetyFunc))
+            })
+        }
+    }
+
     while (detailsPanel.firstChild) {
-        detailsPanel.removeChild(detailsPanel.lastChild);
+        detailsPanel.removeChild(detailsPanel.lastChild)
     }
     elements.forEach((elem) => detailsPanel.appendChild(elem))
 }
@@ -314,6 +333,7 @@ function GetDiagramById(id) {
 
 let currentSelectedDiagramIndex = -1
 function GenerateDetailsPanelById(id) {
+    if (GenerateDetailsPanelById === -1) GenerateDetailsPanel(Object())
     if (id !== currentSelectedDiagramIndex) {
         currentSelectedDiagramIndex = id
         GenerateDetailsPanel(GetDiagramById(id))
@@ -368,15 +388,15 @@ function GetAllInputFieldsAsJson() {
 
         for (let j = 0; j < inputs.length; j++) {
             let inputName = inputs[j].id.substring("input-".length)
-            let inputValue;
+            let inputValue
             if (inputs[j].type === "checkbox") {
-                inputValue = inputs[j].checked;
+                inputValue = inputs[j].checked
             }
             else if (inputs[j].type === "text") {
-                inputValue = `"${inputs[j].value}"`;
+                inputValue = `"${inputs[j].value}"`
             }
             else if (inputs[j].type === "select-one") {
-                inputValue = inputs[j].selectedIndex;
+                inputValue = inputs[j].selectedIndex
             }
             settingsAsJson += `"${inputName}":${inputValue}`
             if (j < inputs.length - 1) settingsAsJson += ','
@@ -438,6 +458,7 @@ function JoinToWorkspace(workspaceId) {
         .then(function () {
             console.log("join: " + workspaceId)
             PullWorkspace()
+            GetWorkspaceUsers()
         })
         .catch(function (err) {
             return console.error(err.toString())
@@ -454,6 +475,36 @@ function LeaveFromWorkspace() {
         })
 }
 
+function GetWorkspaceUsers() {
+    connection.invoke("UserList")
+        .then(function () {
+            console.log("UserList")
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
+function AddUserToWorkspace(name) {
+    connection.invoke("AddUser", name)
+        .then(function () {
+            console.log("AddUser")
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
+function RemoveUserFromWorkspace(name) {
+    connection.invoke("RemoveUser", name)
+        .then(function () {
+            console.log("RemoveUser")
+        })
+        .catch(function (err) {
+            return console.error(err.toString())
+        })
+}
+
 connection.on("Update", function (newData, jsonDocument) {
     console.log("update:" + newData)
     SetAllInputFieldsFromJson(newData)
@@ -463,7 +514,13 @@ connection.on("Update", function (newData, jsonDocument) {
     RegenerateDiagrams()
     UpateJsonDocumentViewer()
     RegenerateDetailsPanel()
-});
+})
+
+connection.on("UserListResult", function (userlist) {
+    console.log("UserListResult:" + userlist)
+    workspaceUsers = JSON.parse(userlist)
+    GenerateUserList()
+})
 
 connection.start().then(function () {
     console.log("start")

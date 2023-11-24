@@ -1,54 +1,17 @@
 'use strict'
 
-document.addEventListener('DOMContentLoaded', function () {
-    let work_spaces = document.getElementsByClassName("work-space")
-    for (let i = 0; i < work_spaces.length; i++) {
-        makeWorkSpace(work_spaces[i])
-    }
-})
+function setScrollAtCenter(workspace_view, workspace) {
+    let compStyles = getComputedStyle(workspace)
+    let width = parseInt(compStyles.getPropertyValue('--work-space-width'))
+    let height = parseInt(compStyles.getPropertyValue('--work-space-height'))
 
-// Workspace
-function makeWorkSpace(work_space) {
-    work_space.onmousedown = onClick
-    let work_space_view = work_space.closest('.work-space-view')
-    setScrollAtCenter(work_space_view, work_space)
+    let clientWidth = workspace_view.clientWidth
+    let clientHeight = workspace_view.clientHeight
 
-    function onClick(e) {
-        let dragElem = e.target
-        if (dragElem.className === "draggable-header") {
-            let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
-            GenerateDetailsPanelById(diagramId)
-            startDragMove(e, dragElem.closest('.draggable'), (elem, pos) => {
-                setElementPosition(elem, getPosOnGrid(pos))
-            },
-                (elem, pos) => {
-                    let diagram = GetDiagramById(diagramId)
-                    let gridPos = getPosOnGrid(pos)
-                    if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
-                        diagram.Position.X = pos.x
-                        diagram.Position.Y = pos.y
-                        UpateJsonDocumentViewer()
-                        RegenerateDetailsPanel()
-                    }
-                },
-            )
-        }
-        else if (!dragElem.closest('.draggable')) startDragScroll(e, work_space_view)
-    }
+    workspace_view.scrollTo(width / 2 - clientWidth / 2, height / 2 - clientHeight / 2)
 }
 
-function setScrollAtCenter(work_space_view, work_space) {
-    let compStyles = getComputedStyle(work_space)
-    let width = parseInt(compStyles.getPropertyValue('--work-space-width'));
-    let height = parseInt(compStyles.getPropertyValue('--work-space-height'));
-
-    let clientWidth = work_space_view.clientWidth;
-    let clientHeight = work_space_view.clientHeight;
-
-    work_space_view.scrollTo(width / 2 - clientWidth / 2, height / 2 - clientHeight / 2)
-}
-
-let gridSnap = 10;
+let gridSnap = 10
 function getPosOnGrid(pos) {
     //setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
     return {
@@ -58,7 +21,15 @@ function getPosOnGrid(pos) {
 }
 
 function setElementPosition(elem, pos) {
-    elem.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+    elem.style.transform = `translate(${pos.x}px, ${pos.y}px)`
+}
+
+function getPositionInWorkspaceByEvent(workspace, e) {
+    var rect = workspace.getBoundingClientRect()
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    }
 }
 
 // Drag move
@@ -95,8 +66,8 @@ function startDragMove(e, elem, onMoveFunc, onEndMove) {
         curPos.x = e.clientX
         curPos.y = e.clientY
 
-        elemPos.x = elemPos.x - dx;
-        elemPos.y = elemPos.y - dy;
+        elemPos.x = elemPos.x - dx
+        elemPos.y = elemPos.y - dy
 
         onMoveFunc(elem, elemPos)
     }
@@ -139,5 +110,172 @@ function startDragScroll(e, elem) {
 
         document.onmouseup = null
         document.onmousemove = null
+    }
+}
+
+let dragDiagramType = ""
+let prevDiagramElem = undefined
+// Workspace
+function makeWorkSpace(workspace) {
+    workspace.onmousedown = onClick
+    workspace.ondrop = onDrop
+    workspace.ondragover = onDragOver
+    workspace.ondragleave = onDragLeave
+    let workspace_view = workspace.closest('.work-space-view')
+    setScrollAtCenter(workspace_view, workspace)
+
+    function onClick(e) {
+        let dragElem = e.target
+        if (dragElem.className === "draggable-header") {
+            let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
+            GenerateDetailsPanelById(diagramId)
+            startDragMove(e, dragElem.closest('.draggable'),
+                (elem, pos) => {
+                    setElementPosition(elem, getPosOnGrid(pos))
+                },
+                (elem, pos) => {
+                    let diagram = GetDiagramById(diagramId)
+                    let gridPos = getPosOnGrid(pos)
+                    if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
+                        diagram.Position.X = pos.x
+                        diagram.Position.Y = pos.y
+                        UpateJsonDocumentViewer()
+                        RegenerateDetailsPanel()
+                    }
+                },
+            )
+        }
+        else if (!dragElem.closest('.draggable')) {
+            GenerateDetailsPanelById(-1)
+            startDragScroll(e, workspace_view)
+        }
+    }
+
+    function onDrop(e) {
+        if (dragDiagramType === "") return
+        e.preventDefault()
+
+        prevDiagramElem = undefined
+
+        AddDiagram(CreateDiagram(dragDiagramType, getPosOnGrid(getPositionInWorkspaceByEvent(workspace, e))))
+        dragDiagramType = ""
+    }
+
+    function onDragOver(e) {
+        if (dragDiagramType === "") return
+        e.preventDefault()
+
+        if (prevDiagramElem === undefined) {
+            prevDiagramElem = GenerateDiagram(CreateDiagram(dragDiagramType, { x: 0, y: 0 }))
+            workspace.appendChild(prevDiagramElem)
+        }
+        let pos = getPosOnGrid(getPositionInWorkspaceByEvent(workspace, e))
+        pos.x = pos.x + 5
+        pos.y = pos.y + 5
+        setElementPosition(prevDiagramElem, pos)
+        console.log("o")
+    }
+
+    function onDragLeave(e) {
+        if (dragDiagramType === "") return
+        e.preventDefault()
+
+        if (prevDiagramElem !== undefined) {
+            prevDiagramElem.remove()
+            prevDiagramElem = undefined
+        }
+        console.log("r")
+    }
+}
+
+function startDragDiagram(e) {
+    dragDiagramType = e.target.id
+
+    e.dataTransfer.setDragImage(new Image(), 0, 0);
+}
+
+
+
+let userlist
+let workspaceUsers = ['User1', 'User2']
+
+document.addEventListener('DOMContentLoaded', function () {
+    let diagList = document.getElementsByClassName("add-diag")
+    for (let i = 0; i < diagList.length; i++) {
+        console.log("diag")
+        diagList[i].setAttribute("draggable", "true")
+        diagList[i].ondragstart = startDragDiagram
+    }
+
+    let work_spaces = document.getElementsByClassName("work-space")
+    for (let i = 0; i < work_spaces.length; i++) {
+        makeWorkSpace(work_spaces[i])
+    }
+
+    userlist = document.getElementById("userlist")
+    GenerateUserList()
+})
+
+
+// UserList
+
+function UpdateUserList() {
+    GetWorkspaceUsers()
+}
+
+function AddUser() {
+    let newUserName = document.getElementById("adduser-input").value
+    if (newUserName !== "") {
+        AddUserToWorkspace(newUserName)
+        workspaceUsers.push(newUserName)
+        GenerateUserList()
+    }
+}
+
+function RemoveUser(index) {
+    console.log(index)
+    RemoveUserFromWorkspace(workspaceUsers[index])
+    workspaceUsers.splice(index, 1)
+    GenerateUserList()
+}
+
+function GenerateUserList() {
+    while (userlist.firstChild) {
+        userlist.removeChild(userlist.lastChild)
+    }
+
+    let header = document.createElement('li')
+    header.classList.add('list-group-item')
+    header.innerText = 'Users list'
+    userlist.appendChild(header)
+
+    for (let i = 0; i < workspaceUsers.length; i++) {
+        let li = document.createElement('li')
+        li.classList.add('list-group-item', 'd-flex', 'flex-row')
+
+        let removeButton = document.createElement('button')
+        removeButton.classList.add('btn', 'p-0', 'border-0')
+        removeButton.onclick = function () {
+            RemoveUser(i)
+        }
+        let removeButtonIcon = document.createElement('i')
+        removeButtonIcon.classList.add('bi', 'bi-x', 'fs-3')
+        removeButton.appendChild(removeButtonIcon)
+        li.appendChild(removeButton)
+
+        let line = document.createElement('div')
+        line.classList.add('vr', 'ms-2', 'me-2')
+        li.appendChild(line)
+
+        let userIcon = document.createElement('i')
+        userIcon.classList.add('bi', 'bi-person-circle', 'ps-1', 'fs-2')
+        li.appendChild(userIcon)
+
+        let userName = document.createElement('p')
+        userName.classList.add('m-0', 'ps-2', 'align-self-center')
+        userName.innerText = workspaceUsers[i]
+        li.appendChild(userName)
+
+        userlist.appendChild(li)
     }
 }

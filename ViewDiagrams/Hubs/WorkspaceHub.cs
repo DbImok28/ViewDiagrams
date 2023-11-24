@@ -1,58 +1,27 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
 using ViewDiagrams.Models;
-using ViewDiagrams.Models.Repository;
+using ViewDiagrams.Models.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ViewDiagrams.Hubs
 {
     public class WorkspaceHub : Hub
     {
-        private readonly WorkspaceRepository _workspaceRepository;
+        private readonly WorkspaceHubHelpers _helper;
 
         public WorkspaceHub(ApplicationDbContext context)
         {
-            _workspaceRepository = new WorkspaceRepository(context);
-        }
-
-        public int GetWorkspaceId()
-        {
-            if (Context.Items["WorkspaceId"] is int workspaceId)
-            {
-                return workspaceId;
-            }
-            throw new HubException("The user is not connected to the workspace");
-        }
-
-        public Workspace GetWorkspace(int workspaceId)
-        {
-            Workspace? workspace = _workspaceRepository.GetWorkspace(workspaceId);
-            if (workspace == null) throw new HubException("Workspace does not exist");
-            return workspace;
-        }
-
-        public WorkspaceUserRole GetUserRole(int workspaceId)
-        {
-            if (Context.User == null) return WorkspaceUserRole.Guest;
-            return _workspaceRepository.GetUserRole(Context.User, workspaceId);
-        }
-
-        public void CheckPrivateAccess(WorkspaceUserRole role)
-        {
-            if (role == WorkspaceUserRole.Guest) throw new HubException("Access is denied");
-        }
-
-        public void CheckPublicAccess(Workspace workspace)
-        {
-            if ((Context.User == null || _workspaceRepository.IsGuest(Context.User, workspace.Id))
-                && !workspace.IsPublic) throw new HubException("Access is denied");
+            _helper = new WorkspaceHubHelpers(context);
         }
 
         public async Task Sink(string data, string documentInJson)
         {
-            int workspaceId = GetWorkspaceId();
-            var role = GetUserRole(workspaceId);
+            int workspaceId = _helper.GetWorkspaceId(Context);
+            var role = _helper.GetUserRole(Context, workspaceId);
 
-            CheckPrivateAccess(role);
+            _helper.CheckPrivateAccess(role);
 
             Workspace? newWorkspace;
             try
@@ -66,13 +35,13 @@ namespace ViewDiagrams.Hubs
             if (newWorkspace == null) return;
             newWorkspace.DocumentInJson = documentInJson;
 
-            var workspace = GetWorkspace(workspaceId);
+            var workspace = _helper.GetWorkspace(workspaceId);
             workspace.Update(newWorkspace, role == WorkspaceUserRole.Admin);
 
             newWorkspace.Id = workspaceId;
             try
             {
-                _workspaceRepository.SaveChanges();
+                _helper.SaveWorkspaceChanges();
             }
             catch (Exception e)
             {
@@ -83,8 +52,8 @@ namespace ViewDiagrams.Hubs
 
         public async Task Pull()
         {
-            int workspaceId = GetWorkspaceId();
-            Workspace workspace = GetWorkspace(workspaceId);
+            int workspaceId = _helper.GetWorkspaceId(Context);
+            Workspace workspace = _helper.GetWorkspace(workspaceId);
 
             //CheckPublicAccess(workspace);
 
@@ -99,9 +68,9 @@ namespace ViewDiagrams.Hubs
             await Leave();
 
             int workspaceId = Convert.ToInt32(newWorkspaceId);
-            Workspace workspace = GetWorkspace(workspaceId);
+            Workspace workspace = _helper.GetWorkspace(workspaceId);
 
-            CheckPublicAccess(workspace);
+            _helper.CheckPublicAccess(Context, workspace);
 
             Context.Items["WorkspaceId"] = workspaceId;
             await Groups.AddToGroupAsync(Context.ConnectionId, workspaceId.ToString());
@@ -114,6 +83,32 @@ namespace ViewDiagrams.Hubs
                 Context.Items.Remove(workspaceId);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, workspaceId.ToString());
             }
+        }
+
+        public async Task UserList()
+        {
+            Workspace workspace = _helper.GetWorkspace(_helper.GetWorkspaceId(Context));
+            _helper.LoadUsers(workspace);
+            try
+            {
+                var userInJson = JsonSerializer.Serialize(workspace.Users.Select(x => x.UserName));
+                await Clients.Caller.SendAsync("UserListResult", userInJson);
+            }
+            catch (JsonException e)
+            {
+                throw new HubException(e.Message);
+            }
+        }
+
+        public void AddUser(string name)
+        {
+            _helper.CheckAdminAccess(Context);
+            _helper.AddUser(_helper.GetWorkspaceId(Context), name);
+        }
+
+        public void RemoveUser(string name)
+        {
+            _helper.RemoveUser(_helper.GetWorkspaceId(Context), name);
         }
     }
 }

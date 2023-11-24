@@ -62,5 +62,28 @@ namespace ViewDiagrams.Models.Repository
         {
             return GetUserRole(claims, workspaceId) == WorkspaceUserRole.Guest;
         }
+
+        public void LoadUsers(Workspace workspace)
+        {
+            _context.Entry(workspace)
+            .Collection(c => c.Users)
+            .Load();
+        }
+
+        public void AddUser(int workspaceId, string name)
+        {
+            var user = _context.Users.Single(x => x.UserName == name);
+            var workspace = _context.Workspaces.Single(x => x.Id == workspaceId);
+            _context.WorkspaceUsers.Add(new WorkspaceUser() { User = user, Workspace = workspace });
+            SaveChanges();
+        }
+
+        public void RemoveUser(int workspaceId, string name)
+        {
+            var user = _context.Users.Single(x => x.UserName == name);
+            var workspaceUser = _context.WorkspaceUsers.Single(x => x.WorkspaceId == workspaceId && x.UserId == user.Id);
+            _context.WorkspaceUsers.Remove(workspaceUser);
+            SaveChanges();
+        }
     }
 }

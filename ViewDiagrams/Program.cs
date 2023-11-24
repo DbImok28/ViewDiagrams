@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ViewDiagrams.Hubs;
 using ViewDiagrams.Models;
-using ViewDiagrams.Models.Repository;
 
 namespace ViewDiagrams
 {
@@ -19,10 +17,10 @@ namespace ViewDiagrams
                 options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
             });
             builder.Services.AddControllersWithViews();
-            var s = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                //options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection"));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"));
             });
 
             builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
@@ -41,14 +39,6 @@ namespace ViewDiagrams
             builder.Services.AddSession();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
-
-            //builder.Services.AddDefaultIdentity<User>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-            //builder.Services.AddIdentity<User, IdentityRole>(options =>
-            //{
-            //    options.User.RequireUniqueEmail = false;
-            //});
-
             builder.Services.AddSignalR();
 
             var app = builder.Build();

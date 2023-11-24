@@ -44,7 +44,16 @@ namespace ViewDiagrams.Controllers
                 }
             }
             ViewBag.IsGuest = false;
-            ViewBag.IsAdmin = role == WorkspaceUserRole.Admin;
+
+            if (role == WorkspaceUserRole.Admin)
+            {
+                ViewBag.IsAdmin = true;
+                _workspaceRepository.LoadUsers(workspace);
+            }
+            else
+            {
+                ViewBag.IsAdmin = false;
+            }
             return View();
         }
 
