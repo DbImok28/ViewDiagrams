@@ -1,4 +1,4 @@
-﻿namespace ViewDiagrams.Models
+﻿namespace ViewDiagrams.Models.Database
 {
     public enum WorkspaceUserRole
     {

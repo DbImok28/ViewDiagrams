@@ -74,7 +74,7 @@ html {
     max-width: var(--item-panel-width);
 }
 
-.details-panel {
+.right-panel {
     min-width: var(--right-panel-width);
     max-width: var(--right-panel-width);
 }
@@ -87,4 +87,9 @@ html {
 .down-panel {
     min-height: var(--down-panel-height);
     max-height: var(--down-panel-height);
+}
+
+.right-tab-bar {
+    min-height: var(--side-panel-width);
+    max-height: var(--side-panel-width);
 }

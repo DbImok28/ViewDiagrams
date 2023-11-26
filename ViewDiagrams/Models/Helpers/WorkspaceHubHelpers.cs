@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using ViewDiagrams.Models.Repository;
+using ViewDiagrams.Models.Database;
+using ViewDiagrams.Repository;
 
 namespace ViewDiagrams.Models.Helpers
 {
@@ -24,7 +24,7 @@ namespace ViewDiagrams.Models.Helpers
 
         public Workspace GetWorkspace(int workspaceId)
         {
-            Workspace? workspace = _workspaceRepository.GetWorkspace(workspaceId);
+            Workspace? workspace = _workspaceRepository.Get(workspaceId);
             if (workspace == null) throw new HubException("Workspace does not exist");
             return workspace;
         }
@@ -35,9 +35,14 @@ namespace ViewDiagrams.Models.Helpers
             return _workspaceRepository.GetUserRole(hubContext.User, workspaceId);
         }
 
+        public void Update(Workspace workspace, string documentInJson, bool isAdmin, Workspace oldWorkspace)
+        {
+            _workspaceRepository.Update(workspace, documentInJson, isAdmin, oldWorkspace);
+        }
+
         public void CheckAdminAccess(HubCallerContext hubContext)
         {
-            var userId = hubContext.User.GetUserId();
+            var userId = hubContext.User?.GetUserId();
             if (userId == null || !_workspaceRepository.IsAdmin(userId.Value, GetWorkspaceId(hubContext))) throw new HubException("Access is denied");
         }
 
@@ -52,9 +57,9 @@ namespace ViewDiagrams.Models.Helpers
                 && !workspace.IsPublic) throw new HubException("Access is denied");
         }
 
-        public void SaveWorkspaceChanges()
+        public IEnumerable<User> GetUsers(Workspace workspace)
         {
-            _workspaceRepository.SaveChanges();
+            return _workspaceRepository.GetUsers(workspace);
         }
 
         public void AddUser(int workspaceId, string name)
@@ -65,11 +70,6 @@ namespace ViewDiagrams.Models.Helpers
         public void RemoveUser(int workspaceId, string name)
         {
             _workspaceRepository.RemoveUser(workspaceId, name);
-        }
-
-        public void LoadUsers(Workspace workspace)
-        {
-            _workspaceRepository.LoadUsers(workspace);
         }
     }
 }

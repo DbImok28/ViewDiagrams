@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ViewDiagrams.Models;
+using ViewDiagrams.Models.Database;
 using ViewDiagrams.Models.Helpers;
-using ViewDiagrams.Models.Repository;
 using ViewDiagrams.Models.ViewModel;
+using ViewDiagrams.Repository;
 
 namespace ViewDiagrams.Controllers
 {
@@ -25,7 +26,7 @@ namespace ViewDiagrams.Controllers
         {
             if (id == null) return RedirectToAction(nameof(Create), nameof(WorkspaceController).Replace("Controller", ""));
 
-            var workspace = _workspaceRepository.GetWorkspace(id.Value);
+            var workspace = _workspaceRepository.Get(id.Value);
             if (workspace == null) return WorkspaceNotExist();
             ViewBag.Workspace = workspace;
 

@@ -12,5 +12,17 @@ namespace ViewDiagrams.Models.Helpers
             if (claim == null) return null;
             return Convert.ToInt32(claim.Value);
         }
+
+        public static string? GetUserName(this IPrincipal principal)
+        {
+            var claimsIdentity = (ClaimsIdentity?)principal.Identity;
+            return claimsIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+        }
+
+        public static string? GetUserEmail(this IPrincipal principal)
+        {
+            var claimsIdentity = (ClaimsIdentity?)principal.Identity;
+            return claimsIdentity?.FindFirst(ClaimTypes.Email)?.Value;
+        }
     }
 }

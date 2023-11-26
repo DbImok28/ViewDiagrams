@@ -459,6 +459,7 @@ function JoinToWorkspace(workspaceId) {
             console.log("join: " + workspaceId)
             PullWorkspace()
             GetWorkspaceUsers()
+            InitChat()
         })
         .catch(function (err) {
             return console.error(err.toString())

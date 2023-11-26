@@ -12,8 +12,8 @@ using ViewDiagrams.Models.Database;
 namespace ViewDiagrams.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231119115958_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231126103705_AddChatMessages")]
+    partial class AddChatMessages
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,6 +155,31 @@ namespace ViewDiagrams.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ViewDiagrams.Models.Database.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SendDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("ViewDiagrams.Models.User", b =>
@@ -325,6 +350,17 @@ namespace ViewDiagrams.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ViewDiagrams.Models.Database.ChatMessage", b =>
+                {
+                    b.HasOne("ViewDiagrams.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ViewDiagrams.Models.WorkspaceUser", b =>

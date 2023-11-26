@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ViewDiagrams.Models;
+using ViewDiagrams.Models.Database;
 using ViewDiagrams.Models.ViewModel;
 
 namespace ViewDiagrams.Controllers
 {
-	public class AccountController : Controller
+    public class AccountController : Controller
 	{
 		private readonly UserManager<User> _userManager;
 		private readonly SignInManager<User> _signInManager;

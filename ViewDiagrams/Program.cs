@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ViewDiagrams.Hubs;
 using ViewDiagrams.Models;
+using ViewDiagrams.Models.Database;
 
 namespace ViewDiagrams
 {
