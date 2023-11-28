@@ -1,4 +1,6 @@
-﻿function AddMessageToChat(messageUsername, sendDate, message) {
+﻿'use strict'
+
+function AddMessageToChat(messageUsername, sendDate, message) {
     let chatElem = document.getElementById("chat-messages")
 
     const isOwnMessage = username === messageUsername

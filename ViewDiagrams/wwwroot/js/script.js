@@ -34,7 +34,7 @@ function getPositionInWorkspaceByEvent(workspace, e) {
 
 // Drag move
 
-function getTranslateXY(elem) {
+function GetTranslateXY(elem) {
     const style = window.getComputedStyle(elem)
     const matrix = new DOMMatrixReadOnly(style.transform)
     return {
@@ -52,7 +52,7 @@ function startDragMove(e, elem, onMoveFunc, onEndMove) {
         y: e.clientY
     }
 
-    let elemPos = getTranslateXY(elem)
+    let elemPos = GetTranslateXY(elem)
 
     document.onmouseup = closeDragElement
     document.onmousemove = elementDrag
@@ -127,23 +127,36 @@ function makeWorkSpace(workspace) {
     function onClick(e) {
         let dragElem = e.target
         if (dragElem.className === "draggable-header") {
-            let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
-            GenerateDetailsPanelById(diagramId)
-            startDragMove(e, dragElem.closest('.draggable'),
-                (elem, pos) => {
-                    setElementPosition(elem, getPosOnGrid(pos))
-                },
-                (elem, pos) => {
-                    let diagram = GetDiagramById(diagramId)
-                    let gridPos = getPosOnGrid(pos)
-                    if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
-                        diagram.Position.X = pos.x
-                        diagram.Position.Y = pos.y
-                        UpateJsonDocumentViewer()
-                        RegenerateDetailsPanel()
-                    }
-                },
-            )
+            let diagramElem = dragElem.closest('.diagram')
+            if (diagramElem !== undefined) {
+                let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
+                GenerateDetailsPanelById(diagramId)
+                startDragMove(e, dragElem.closest('.draggable'),
+                    (elem, pos) => {
+                        setElementPosition(elem, getPosOnGrid(pos))
+                        RegenerateDiagramConnectors(diagramId)
+                    },
+                    (elem, pos) => {
+                        let diagram = GetDiagramById(diagramId)
+                        let gridPos = getPosOnGrid(pos)
+                        if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
+                            diagram.Position.X = pos.x
+                            diagram.Position.Y = pos.y
+                            UpateJsonDocumentViewer()
+                            RegenerateDetailsPanel()
+                            RegenerateDiagramConnectors(diagramId)
+                        }
+                    },
+                )
+            }
+            else {
+                startDragMove(e, dragElem.closest('.draggable'),
+                    (elem, pos) => {
+                        setElementPosition(elem, getPosOnGrid(pos))
+                    },
+                    (elem, pos) => { },
+                )
+            }
         }
         else if (!dragElem.closest('.draggable')) {
             GenerateDetailsPanelById(-1)
@@ -194,11 +207,6 @@ function startDragDiagram(e) {
     e.dataTransfer.setDragImage(new Image(), 0, 0);
 }
 
-
-
-let userlist
-let workspaceUsers = ['User1', 'User2']
-
 document.addEventListener('DOMContentLoaded', function () {
     let diagList = document.getElementsByClassName("add-diag")
     for (let i = 0; i < diagList.length; i++) {
@@ -211,71 +219,4 @@ document.addEventListener('DOMContentLoaded', function () {
     for (let i = 0; i < work_spaces.length; i++) {
         makeWorkSpace(work_spaces[i])
     }
-
-    userlist = document.getElementById("userlist")
-    GenerateUserList()
 })
-
-
-// UserList
-
-function UpdateUserList() {
-    GetWorkspaceUsers()
-}
-
-function AddUser() {
-    let newUserName = document.getElementById("adduser-input").value
-    if (newUserName !== "") {
-        AddUserToWorkspace(newUserName)
-        workspaceUsers.push(newUserName)
-        GenerateUserList()
-    }
-}
-
-function RemoveUser(index) {
-    console.log(index)
-    RemoveUserFromWorkspace(workspaceUsers[index])
-    workspaceUsers.splice(index, 1)
-    GenerateUserList()
-}
-
-function GenerateUserList() {
-    while (userlist.firstChild) {
-        userlist.removeChild(userlist.lastChild)
-    }
-
-    let header = document.createElement('li')
-    header.classList.add('list-group-item')
-    header.innerText = 'Users list'
-    userlist.appendChild(header)
-
-    for (let i = 0; i < workspaceUsers.length; i++) {
-        let li = document.createElement('li')
-        li.classList.add('list-group-item', 'd-flex', 'flex-row')
-
-        let removeButton = document.createElement('button')
-        removeButton.classList.add('btn', 'p-0', 'border-0')
-        removeButton.onclick = function () {
-            RemoveUser(i)
-        }
-        let removeButtonIcon = document.createElement('i')
-        removeButtonIcon.classList.add('bi', 'bi-x', 'fs-3')
-        removeButton.appendChild(removeButtonIcon)
-        li.appendChild(removeButton)
-
-        let line = document.createElement('div')
-        line.classList.add('vr', 'ms-2', 'me-2')
-        li.appendChild(line)
-
-        let userIcon = document.createElement('i')
-        userIcon.classList.add('bi', 'bi-person-circle', 'ps-1', 'fs-2')
-        li.appendChild(userIcon)
-
-        let userName = document.createElement('p')
-        userName.classList.add('m-0', 'ps-2', 'align-self-center')
-        userName.innerText = workspaceUsers[i]
-        li.appendChild(userName)
-
-        userlist.appendChild(li)
-    }
-}
