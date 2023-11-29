@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ViewDiagrams.Models;
 using ViewDiagrams.Models.Database;
+using ViewDiagrams.Models.Helpers;
 using ViewDiagrams.Models.ViewModel;
+using ViewDiagrams.Repository;
 
 namespace ViewDiagrams.Controllers
 {
-    public class AccountController : Controller
+	public class AccountController : Controller
 	{
 		private readonly UserManager<User> _userManager;
 		private readonly SignInManager<User> _signInManager;
@@ -100,7 +102,6 @@ namespace ViewDiagrams.Controllers
 		//}
 
 		[HttpGet]
-		[AllowAnonymous]
 		public async Task<IActionResult> ConfirmEmail(string userId, string code)
 		{
 			if (userId == null || code == null)
@@ -119,10 +120,23 @@ namespace ViewDiagrams.Controllers
 				return View("Error");
 		}
 
+		[Authorize]
 		public async Task<IActionResult> Logout()
 		{
 			await _signInManager.SignOutAsync();
 			return RedirectToAction(nameof(Login));
+		}
+
+		[Authorize]
+		public IActionResult Profile()
+		{
+			var userRepository = new UserRepository(_context);
+			var userId = User.GetUserId();
+			if (userId is null) return RedirectToAction(nameof(Login));
+
+			var user = userRepository.Get(userId.Value);
+			userRepository.LoadWorkspaces(user);
+			return View(new ProfileViewModel(user));
 		}
 	}
 }

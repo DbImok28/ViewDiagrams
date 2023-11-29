@@ -151,19 +151,6 @@ function GenerateParametersPanel(diagram) {
     elements.forEach((elem) => parametersPanel.appendChild(elem))
 }
 
-//function RemoveRelationFunc(from, to, type) {
-//    return (index) => {
-//        for (var i = 0; i < workspaceDocument.Connectors.length; i++) {
-//            const item = workspaceDocument.Connectors[i]
-//            if (item.From === from && item.To === to && item.Type === type) {
-//                workspaceDocument.Connectors.splice(i, 1)
-//                UpdateCurrentDiagram()
-//                return
-//            }
-//        }
-//    }
-//}
-
 function GenerateRelationshipListItem(name, object) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
@@ -183,7 +170,6 @@ function GenerateRelationshipListItem(name, object) {
     return ul
 }
 
-
 function GenerateRelationshipPanelListItems(diagram) {
     let relations = workspaceDocument.Connectors
     const propGenFunc = () => {
@@ -194,7 +180,6 @@ function GenerateRelationshipPanelListItems(diagram) {
         }
     }
     let list = GenerateListHeader("Relationship", relations, propGenFunc, (newProp) => {
-        //workspaceDocument.Connectors.push(newProp)
         UpdateCurrentDiagram()
     })
     for (var i = 0; i < relations.length; i++) {
@@ -208,12 +193,6 @@ let relationshipPanel = document.getElementById("diagram-relationship")
 function GenerateRelationshipPanel(diagram) {
     let elements = []
     if (diagram !== undefined) {
-        //let relations = []
-        //let connectors = workspaceDocument.Connectors.filter((x) => diagram.Name === x.From)
-        //connectors.forEach((connector) => {
-        //    relations.push({ Type: connector.Type, To: connector.To })
-        //})
-
         elements.push(GenerateRelationshipPanelListItems(diagram))
     }
 
