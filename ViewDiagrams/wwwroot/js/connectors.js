@@ -13,6 +13,10 @@ function GetConnectorStyle(type) {
             }
         case "Aggregation":
             return {
+                "MarkerStart": "elongated-romb-nofill-start"
+            }
+        case "Composition":
+            return {
                 "MarkerStart": "elongated-romb-start"
             }
         case "Implementation":

@@ -25,6 +25,8 @@
 						<form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+							@Html.AntiForgeryToken()
+
 							<div class="form-group">
 								<label asp-for="Email">E-Mail Address</label>
 								<input asp-for="Email" type="email" class="form-control">
