@@ -2,7 +2,7 @@
 
 let uniqueInputFieldId = 0
 function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () => {
-    RegenerateDiagram()
+    RegenerateCurrentDiagram()
     UpateJsonDocumentViewer()
 }) {
     const container = document.createElement('div')
@@ -222,4 +222,12 @@ function GenerateDetailsPanelByElement(elem) {
 
 function RegenerateDetailsPanel() {
     GenerateDetailsPanel(GetDiagramById(currentSelectedDiagramIndex))
+}
+
+document.getElementById("remove-diagram-btn").onclick = () => {
+    if (currentSelectedDiagramIndex !== -1) {
+        const diagramIndexToDel = currentSelectedDiagramIndex
+        currentSelectedDiagramIndex = -1
+        RemoveDiagramByIndex(diagramIndexToDel)
+    }
 }

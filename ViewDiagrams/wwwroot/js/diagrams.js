@@ -91,11 +91,14 @@ function RegenerateDiagrams() {
 }
 
 function RegenerateDiagram(index) {
-    RegenerateDiagrams()
-
     let elem = GenerateDiagram(workspaceDocument.Diagrams[index])
     workspace.replaceChild(elem, workspaceDocument.Diagrams[index].Element)
     workspaceDocument.Diagrams[index].Element = elem
+}
+
+function RegenerateCurrentDiagram() {
+    RegenerateDiagram(currentSelectedDiagramIndex)
+    RegenerateCurrentDiagramConnectors()
 }
 
 function GetDiagramIdByElement(elem) {

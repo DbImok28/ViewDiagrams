@@ -1,11 +1,38 @@
 'use strict'
 
+const dottedLine = "5,5"
+const dashedLine = "10,10"
+const dashDottedLine = "20,10,5,10"
+const dashedLineWithTwoDots = "20,10,5,5,5,10"
+
+function GetConnectorStyle(type) {
+    switch (type) {
+        case "Association":
+            return {
+                "MarkerStart": "arrow-start"
+            }
+        case "Aggregation":
+            return {
+                "MarkerStart": "elongated-romb-start"
+            }
+        case "Implementation":
+            return {
+                "Dashes": dashedLine,
+                "MarkerEnd": "arrow-end"
+            }
+        default:
+            return undefined
+    }
+}
+
 function ClearConnectors() {
     while (workspaceSvgContainer.firstChild)
         workspaceSvgContainer.removeChild(workspaceSvgContainer.lastChild)
 }
 
-function AddConnector(fromPos, toPos) {
+function AddConnector(fromPos, toPos, type) {
+    const connectorStyle = GetConnectorStyle(type)
+
     const xmlns = "http://www.w3.org/2000/svg";
     let line = document.createElementNS(xmlns, "line")
     line.setAttributeNS(null, "x1", fromPos.x)
@@ -14,8 +41,13 @@ function AddConnector(fromPos, toPos) {
     line.setAttributeNS(null, "y2", toPos.y)
     line.setAttributeNS(null, "stroke", "#000")
     line.setAttributeNS(null, "stroke-width", 2)
-    line.setAttributeNS(null, "marker-end", "url(#arrowhead-end)")
-    line.setAttributeNS(null, "marker-start", "url(#arrowhead-start)")
+
+    if (connectorStyle.Dashes !== undefined)
+        line.setAttributeNS(null, "stroke-dasharray", connectorStyle.Dashes)
+    if (connectorStyle.MarkerStart !== undefined)
+        line.setAttributeNS(null, "marker-start", `url(#${connectorStyle.MarkerStart})`)
+    if (connectorStyle.MarkerEnd !== undefined)
+        line.setAttributeNS(null, "marker-end", `url(#${connectorStyle.MarkerEnd})`)
 
     workspaceSvgContainer.appendChild(line)
 }
@@ -64,22 +96,26 @@ function PosToRectCenter(pos, clientRect) {
     return { x: pos.x + clientRect.width / 2, y: pos.y + clientRect.height / 2 }
 }
 
-function CreateDiagramConnector(diagramFrom, diagramTo) {
+function CreateDiagramConnector(diagramFrom, diagramTo, type) {
     let diagramFromPos = GetTranslateXY(diagramFrom.Element)
     let diagramFromClientRect = diagramFrom.Element.getBoundingClientRect()
     let diagramFromRect = ClientRectToArrRect(diagramFromPos, diagramFromClientRect)
-    let diagramFromRectCenter = PosToRectCenter(diagramFromPos, diagramFromClientRect)
+    let diagramFromHeaderClientRect = diagramFrom.Element.querySelector('.draggable-header').getBoundingClientRect()
+    let diagramFromRectCenter = PosToRectCenter(diagramFromPos, diagramFromHeaderClientRect)
+
 
     let diagramToPos = GetTranslateXY(diagramTo.Element)
     let diagramToClientRect = diagramTo.Element.getBoundingClientRect()
     let diagramToRect = ClientRectToArrRect(diagramToPos, diagramToClientRect)
-    let diagramToRectCenter = PosToRectCenter(diagramToPos, diagramToClientRect)
+    let diagramToHeaderClientRect = diagramTo.Element.querySelector('.draggable-header').getBoundingClientRect()
+    let diagramToRectCenter = PosToRectCenter(diagramToPos, diagramToHeaderClientRect)
+
 
     let fromPos = FindIntersectionPoint(diagramFromRectCenter, diagramToRectCenter, diagramFromRect)
     let toPos = FindIntersectionPoint(diagramFromRectCenter, diagramToRectCenter, diagramToRect)
 
     if (fromPos !== null && toPos !== null)
-        AddConnector(fromPos, toPos)
+        AddConnector(fromPos, toPos, type)
 }
 
 function GenerateDiagramsConnectors() {
@@ -88,7 +124,7 @@ function GenerateDiagramsConnectors() {
         let diagramFrom = workspaceDocument.Diagrams.find((x) => x.Name === connector.From)
         let diagramTo = workspaceDocument.Diagrams.find((x) => x.Name === connector.To)
         if (diagramFrom !== undefined && diagramTo !== undefined)
-            CreateDiagramConnector(diagramFrom, diagramTo)
+            CreateDiagramConnector(diagramFrom, diagramTo, connector.Type)
     })
 }
 

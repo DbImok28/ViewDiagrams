@@ -23,6 +23,11 @@
     </div>
 
     <div class="bg-white item-panel tab-content p-3 h-100">
+        <div class="d-flex flex-row ">
+            <button class="ms-auto btn p-0" id="remove-diagram-btn">
+                <i class="bi bi-trash fs-4 align-self-end"></i>
+            </button>
+        </div>
         <div class="tab-pane fade overflow-auto h-100 active show" id="detail-panel" role="tabpanel" aria-labelledby="detail-panel-tab">
             <ul class="list-unstyled p-3 ps-0">
                 <li class="mb-1">
@@ -52,6 +57,7 @@
                     </div>
                 </li>
             </ul>
+            <div style="height:calc(var(--down-panel-height) + 20px)"></div>
         </div>
         <div class="tab-pane fade overflow-auto h-100" id="jsonDocumentViwer-panel" role="tabpanel" aria-labelledby="jsonDocumentViwer-panel-tab">
             <div class="collapse show" id="workspace-document-collapse" style="">

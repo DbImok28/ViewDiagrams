@@ -69,8 +69,8 @@ function AddDiagram(diagram) {
     UpdateAllDiagrams()
 }
 
-function RemoveDiagram(diagram) {
-    workspaceDocument.Diagrams.pop(diagram)
+function RemoveDiagramByIndex(index) {
+    workspaceDocument.Diagrams.splice(index, 1)
     UpdateAllDiagrams()
 }
 
