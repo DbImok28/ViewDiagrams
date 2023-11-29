@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ViewDiagrams.Models;
@@ -9,6 +10,7 @@ using ViewDiagrams.Repository;
 
 namespace ViewDiagrams.Controllers
 {
+	[Authorize]
 	public class WorkspaceController : Controller
 	{
 		private readonly ILogger<WorkspaceController> _logger;

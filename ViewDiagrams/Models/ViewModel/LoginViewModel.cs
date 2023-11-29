@@ -15,5 +15,7 @@ namespace ViewDiagrams.Models.ViewModel
 		public string Password { get; set; }
 
 		public bool RememberPassword { get; set; }
+
+		public string? ReturnUrl { get; set; }
 	}
 }

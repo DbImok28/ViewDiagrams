@@ -22,67 +22,80 @@ namespace ViewDiagrams.Controllers
 			_context = context;
 		}
 
-		public IActionResult Login()
+		public IActionResult Login(string? returnUrl = null)
 		{
-			LoginViewModel loginViewModel = new LoginViewModel();
-			return View(loginViewModel);
+			return View(new LoginViewModel() { ReturnUrl = returnUrl });
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+		public async Task<IActionResult> Login(LoginViewModel model)
 		{
-			if (!ModelState.IsValid) return View(loginViewModel);
+			if (!ModelState.IsValid) return View(model);
 
-			var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
+			var user = await _userManager.FindByEmailAsync(model.Email);
 			if (user != null)
 			{
-				var passwordCheck = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
+				var passwordCheck = await _userManager.CheckPasswordAsync(user, model.Password);
 				if (passwordCheck)
 				{
-					var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, loginViewModel.RememberPassword, false);
+					var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberPassword, false);
 					if (result.Succeeded)
 					{
-						return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
+						if (model.ReturnUrl != null)
+						{
+							return LocalRedirect(model.ReturnUrl);
+						}
+						else
+						{
+							return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
+						}
 					}
 				}
 			}
 			TempData["Error"] = "Wrong credentials. Please try again.";
-			return View(loginViewModel);
+			return View(model);
 		}
 
-		public IActionResult Register()
+		public IActionResult Register(string? returnUrl = null)
 		{
-			RegisterViewModel registerViewModel = new RegisterViewModel();
-			return View(registerViewModel);
+			return View(new RegisterViewModel() { ReturnUrl = returnUrl });
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+		public async Task<IActionResult> Register(RegisterViewModel model)
 		{
-			if (!ModelState.IsValid) return View(registerViewModel);
+			if (!ModelState.IsValid) return View(model);
 
-			var user = await _userManager.FindByEmailAsync(registerViewModel.Email);
+			var user = await _userManager.FindByEmailAsync(model.Email);
 			if (user != null)
 			{
 				TempData["Error"] = "This email address is already in use.";
-				return View(registerViewModel);
+				return View(model);
 			}
 
 			var newUser = new User()
 			{
-				Email = registerViewModel.Email,
-				UserName = registerViewModel.Username,
+				Email = model.Email,
+				UserName = model.Username,
 				EmailConfirmed = true,
 			};
 
-			var newUserResponce = await _userManager.CreateAsync(newUser, registerViewModel.Password);
+			var newUserResponce = await _userManager.CreateAsync(newUser, model.Password);
 			if (!newUserResponce.Succeeded)
 			{
 				TempData["Error"] = newUserResponce.Errors.First().Description;
-				return View(registerViewModel);
+				return View(model);
 			}
-			await _signInManager.SignInAsync(newUser, registerViewModel.RememberPassword);
-			return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
+			await _signInManager.SignInAsync(newUser, model.RememberPassword);
+
+			if (model.ReturnUrl != null)
+			{
+				return LocalRedirect(model.ReturnUrl);
+			}
+			else
+			{
+				return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
+			}
 		}
 
 		//private async void SendConfirmEmail(User user)
