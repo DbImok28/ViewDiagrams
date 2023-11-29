@@ -18,16 +18,28 @@ function SetDefaultWorkspace() {
                 "Properties": [
                     {
                         "Name": "Prop 1",
+                        "Type": "int",
                         "AccessModifier": "Public"
                     },
                     {
                         "Name": "Prop 2",
+                        "Type": "string",
                         "AccessModifier": "Public"
                     }
+                ],
+                "Methods": [
+                    {
+                        "AccessModifier": "Public",
+                        "ReturnType": "string",
+                        "Name": "Method 1",
+                        "Arguments": [],
+                    },
                 ],
                 "Attributes": [
                     "Attribute 1",
                     "Attribute 2"
+                ],
+                "TemplateArguments": [
                 ],
 
                 "Position": { "X": "820", "Y": "750" },
@@ -40,12 +52,29 @@ function SetDefaultWorkspace() {
                 "Properties": [
                     {
                         "Name": "Prop 3",
+                        "Type": "string",
                         "AccessModifier": "Public"
                     },
                     {
                         "Name": "Prop 4",
+                        "Type": "float",
                         "AccessModifier": "Public"
                     }
+                ],
+                "Methods": [
+                    {
+                        "AccessModifier": "Public",
+                        "ReturnType": "string",
+                        "Name": "Method 2",
+                        "Arguments": [{
+                            "Type": "string",
+                            "Name": "name"
+                        }]
+                    },
+                ],
+                "Attributes": [
+                ],
+                "TemplateArguments": [
                 ],
 
                 "Position": { "X": "1030", "Y": "1020" },
@@ -72,6 +101,14 @@ function AddDiagram(diagram) {
 function RemoveDiagramByIndex(index) {
     workspaceDocument.Diagrams.splice(index, 1)
     UpdateAllDiagrams()
+}
+
+function RemoveSelectedDiagram() {
+    if (currentSelectedDiagramIndex !== -1) {
+        const diagramIndexToDel = currentSelectedDiagramIndex
+        currentSelectedDiagramIndex = -1
+        RemoveDiagramByIndex(diagramIndexToDel)
+    }
 }
 
 let workspaceSvgContainer = undefined
@@ -157,7 +194,7 @@ connection.on("Update", function (newData, jsonDocument) {
     console.log("update:" + newData)
     SetAllInputFieldsFromJson(newData)
     workspaceDocument = JSON.parse(jsonDocument)
-    console.log("- doc:" + jsonDocument)
+    //console.log("- doc:" + jsonDocument)
 
     UpdateAllDiagrams()
 })
@@ -171,3 +208,14 @@ connection.start().then(function () {
 }).catch(function (err) {
     return console.error(err.toString())
 })
+
+// Message on close page
+window.onbeforeunload = function (event) {
+    event.preventDefault()
+    event.returnValue = ''
+}
+
+document.onkeydown = (e) => {
+    if (e.code === 'Delete')
+        RemoveSelectedDiagram()
+}

@@ -8,5 +8,6 @@ jsonDocumentViewer.oninput = () => {
     try {
         workspaceDocument = JSON.parse(jsonDocumentViewer.value)
         RegenerateDiagrams()
+        GenerateDiagramsConnectors()
     } catch (e) { }
 }

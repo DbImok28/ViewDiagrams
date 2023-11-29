@@ -123,7 +123,7 @@ function GenerateInputField(name, value, sourceObject, genPropetyFunc) {
         return GenerateListItems(name, value, genPropetyFunc)
     }
     else if (typeof value === "object") {
-        return GenerateGroup(name, value)
+        return GenerateGroup(name, value, genPropetyFunc)
     }
     return document.createElement('div')
 }
@@ -225,9 +225,5 @@ function RegenerateDetailsPanel() {
 }
 
 document.getElementById("remove-diagram-btn").onclick = () => {
-    if (currentSelectedDiagramIndex !== -1) {
-        const diagramIndexToDel = currentSelectedDiagramIndex
-        currentSelectedDiagramIndex = -1
-        RemoveDiagramByIndex(diagramIndexToDel)
-    }
+    RemoveSelectedDiagram()
 }

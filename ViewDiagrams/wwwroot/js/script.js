@@ -186,7 +186,7 @@ function makeWorkSpace(workspace) {
         pos.x = pos.x + 5
         pos.y = pos.y + 5
         setElementPosition(prevDiagramElem, pos)
-        console.log("o")
+        //console.log("o")
     }
 
     function onDragLeave(e) {
@@ -197,7 +197,7 @@ function makeWorkSpace(workspace) {
             prevDiagramElem.remove()
             prevDiagramElem = undefined
         }
-        console.log("r")
+        //console.log("r")
     }
 }
 

@@ -10,13 +10,26 @@ function CreateDiagram(type, pos) {
         case "ClassDiagram": return {
             "Type": "ClassDiagram",
             "Name": "NewClass",
+            "Comments": [],
+            "TemplateArguments": [],
+            "Attributes": [],
             "Properties": [
                 {
                     "Name": "New Property",
+                    "Type": "int",
                     "AccessModifier": "Public"
                 },
             ],
-            "Attributes": [
+            "Methods": [
+                {
+                    "AccessModifier": "Public",
+                    "ReturnType": "string",
+                    "Name": "Method 1",
+                    "Arguments": [{
+                        "Type": "string",
+                        "Name": "name"
+                    }]
+                },
             ],
 
             "Position": { "X": pos.x, "Y": pos.y },
@@ -49,11 +62,37 @@ function GenerateClassDiagram(params) {
 }
 
 function GenerateClassDiagramProperty(propName) {
-    if (propName == "Properties") {
-        return {
-            "Name": "New property",
-            "AccessModifier": "Public"
-        }
+    switch (propName) {
+        case "Properties":
+            return {
+                "Name": "New property",
+                "AccessModifier": "Public"
+            }
+        case "Methods":
+            return {
+                "AccessModifier": "Public",
+                "ReturnType": "string",
+                "Name": "Method 1",
+                "Arguments": []
+            }
+        case "Arguments":
+            return {
+                "Type": "string",
+                "Name": "name"
+            }
+        case "Attributes":
+            return {
+                "Name": "Attribute 1",
+                "Arguments": []
+            }
+        case "TemplateArguments":
+            return {
+                "Name": "T",
+                "Arguments": []
+            }
+        case "Comments":
+            return "Comment"
+        default:
     }
     return undefined
 }

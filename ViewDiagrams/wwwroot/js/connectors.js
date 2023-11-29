@@ -9,7 +9,7 @@ function GetConnectorStyle(type) {
     switch (type) {
         case "Association":
             return {
-                "MarkerStart": "arrow-start"
+                "MarkerEnd": "arrow-end"
             }
         case "Aggregation":
             return {
@@ -22,10 +22,16 @@ function GetConnectorStyle(type) {
         case "Implementation":
             return {
                 "Dashes": dashedLine,
-                "MarkerEnd": "arrow-end"
+                "MarkerEnd": "triangle-nofill-end"
+            }
+        case "Generalization":
+            return {
+                "MarkerEnd": "triangle-nofill-end"
             }
         default:
-            return undefined
+            return {
+                "MarkerEnd": "arrow-end"
+            }
     }
 }
 
