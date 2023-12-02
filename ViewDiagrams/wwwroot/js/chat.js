@@ -93,6 +93,7 @@ connection.on("ReceiveMessage", function (messageUsername, sendDate, message) {
 })
 
 function InitChat() {
+    if (isGuest) return
     const chatElem = document.getElementById("chat-messages")
     const sendBtnElem = document.getElementById("button-send-msg")
     const sendMsgElem = document.getElementById("input-send-msg")

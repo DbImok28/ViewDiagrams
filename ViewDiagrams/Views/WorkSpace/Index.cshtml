@@ -31,7 +31,7 @@
     </environment>
     <script src="~/js/sidebars.js" asp-append-version="true"></script>
 
-    <script>var autoConnectWorkspaceId = @ViewBag.Workspace.Id; var username = '@User.FindFirst(ClaimTypes.Name)?.Value';</script>
+    <script>var autoConnectWorkspaceId = @ViewBag.Workspace.Id; var username = '@User.FindFirst(ClaimTypes.Name)?.Value'; var isGuest = @(ViewBag.IsGuest ? "true" : "false");</script>
     <script src="~/js/diagrams.js" asp-append-version="true"></script>
     <script src="~/js/diagrams_list.js" asp-append-version="true"></script>
     <script src="~/js/connectors.js" asp-append-version="true"></script>

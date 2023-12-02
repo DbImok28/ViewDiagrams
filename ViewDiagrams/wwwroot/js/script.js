@@ -128,6 +128,11 @@ function makeWorkSpace(workspace) {
             let diagramElem = dragElem.closest('.diagram')
             if (diagramElem !== null) {
                 let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
+                if (isGuest) {
+                    GenerateDetailsPanelById(diagramId)
+                    return
+                }
+
                 GenerateDetailsPanelById(diagramId)
                 startDragMove(e, dragElem.closest('.draggable'),
                     (elem, pos) => {

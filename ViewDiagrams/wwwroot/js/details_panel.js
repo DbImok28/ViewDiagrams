@@ -55,6 +55,9 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
         sourceObject[fieldName] = input.value
         onChange()
     }
+    if (isGuest) {
+        input.setAttribute("readonly", true)
+    }
     formContainer.appendChild(input)
 
     const hints = GenerateInputHints(fieldName)
@@ -220,6 +223,9 @@ function GenerateRelationshipTextField(fieldName, fieldValue, sourceObject, onCh
     input.oninput = function () {
         sourceObject[fieldName] = input.value
         onChange()
+    }
+    if (isGuest) {
+        input.setAttribute("readonly", true)
     }
     formContainer.appendChild(input)
 

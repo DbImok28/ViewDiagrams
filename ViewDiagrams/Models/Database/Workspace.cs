@@ -27,12 +27,12 @@ namespace ViewDiagrams.Models
         {
             Name = newWorkspace.Name;
             DocumentInJson = newWorkspace.DocumentInJson;
-            if (!isAdmin)
+            if (isAdmin)
             {
-                newWorkspace.IsPublic = IsPublic;
-                newWorkspace.Test = Test;
-                newWorkspace.UseTest = UseTest;
-                newWorkspace.UseTest2 = UseTest2;
+                IsPublic = newWorkspace.IsPublic;
+                Test = newWorkspace.Test;
+                UseTest = newWorkspace.UseTest;
+                UseTest2 = newWorkspace.UseTest2;
             }
             return newWorkspace;
         }
