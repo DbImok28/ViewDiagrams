@@ -14,14 +14,8 @@
             <div class="collapse show" id="uml-class-collapse" style="">
                 <div class="btn-toggle-nav user-select-none">
                     <button class="btn add-diag" id="ClassDiagram" draggable="true" ondragstart="dragDiagram">
-                        <i class="bi bi-wind fs-3"></i>
+                        <i class="bi bi-diagram-3 fs-3"></i>
                     </button>
-                    <button class="btn add-diag" id="Comment" draggable="true" ondragstart="dragDiagram">
-                        <i class="bi bi-compass fs-3"></i>
-                    </button>
-                    <button class="btn add-diag"><i class="bi bi-wind fs-3"></i></button>
-                    <button class="btn add-diag"><i class="bi bi-wind fs-3"></i></button>
-                    <button class="btn add-diag"><i class="bi bi-wind fs-3"></i></button>
                 </div>
             </div>
         </li>
@@ -32,10 +26,12 @@
             </button>
             <div class="collapse show" id="auxiliary-collapse" style="">
                 <div class="btn-toggle-nav user-select-none">
-                    <button class="bi bi-command fs-3 btn"></button>
-                    <button class="bi bi-command fs-3 btn"></button>
-                    <button class="bi bi-command fs-3 btn"></button>
-                    <button class="bi bi-command fs-3 btn"></button>
+                    <button class="btn add-diag" id="Comment" draggable="true" ondragstart="dragDiagram">
+                        <i class="bi bi-chat-square-text fs-3"></i>
+                    </button>
+                    <button class="btn add-diag" id="Group" draggable="true" ondragstart="dragDiagram">
+                        <i class="bi bi-crop fs-3"></i>
+                    </button>
                 </div>
             </div>
         </li>
@@ -43,15 +39,17 @@
         <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                     data-bs-target="#account-collapse" aria-expanded="false">
-                Account
+                Other
             </button>
             <div class="collapse" id="account-collapse" style="">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-dark rounded">New...</a></li>
-                    <li><a href="#" class="link-dark rounded">Profile</a></li>
-                    <li><a href="#" class="link-dark rounded">Settings</a></li>
-                    <li><a href="#" class="link-dark rounded">Sign out</a></li>
-                </ul>
+                <div class="btn-toggle-nav user-select-none">
+                    <button class="btn add-diag" id="Comment" draggable="true" ondragstart="dragDiagram">
+                        <i class="bi bi-chat-square-text fs-3"></i>
+                    </button>
+                    <button class="btn add-diag" id="Group" draggable="true" ondragstart="dragDiagram">
+                        <i class="bi bi-crop fs-3"></i>
+                    </button>
+                </div>
             </div>
         </li>
     </ul>
