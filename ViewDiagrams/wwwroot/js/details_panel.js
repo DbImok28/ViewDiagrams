@@ -1,9 +1,13 @@
 ﻿'use strict'
 
-function GenerateInputHints() {
-    if ("") {
-
+function GenerateInputHints(inputName) {
+    if (inputName == "Type" || inputName == "ReturnType") {
+        return ["string", "object", "int", "float", "double", "Array", "List", "Map", "Dictionary", "Set"]
     }
+    else if (inputName == "AccessModifier") {
+        return ["Public", "Private", "Protected"]
+    }
+    return null
 }
 
 function GetRelationInputHints(inputName) {
@@ -16,13 +20,6 @@ function GetRelationInputHints(inputName) {
 }
 
 function GenerateHints(hints, hintsId) {
-    //< id="hints">
-    //  <option value="Подсказка 1">
-    //  <option value="Подсказка 2">
-    //  <option value="Подсказка 3">
-    //  <!-- Добавьте здесь свои подсказки -->
-    //</datalist>
-
     const datalist = document.createElement('datalist')
     datalist.id = hintsId
 
@@ -33,7 +30,6 @@ function GenerateHints(hints, hintsId) {
             datalist.appendChild(option)
         }
     })
-
     return datalist
 }
 
@@ -48,7 +44,8 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
     const formContainer = document.createElement('div')
     formContainer.classList.add('form-floating')
 
-    const inputId = `input-u${++uniqueInputFieldId}`
+    const id = ++uniqueInputFieldId
+    const inputId = `input-u${id}`
 
     const input = document.createElement('input')
     input.classList.add('form-control')
@@ -58,14 +55,21 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
         sourceObject[fieldName] = input.value
         onChange()
     }
+    formContainer.appendChild(input)
+
+    const hints = GenerateInputHints(fieldName)
+    if (hints !== null) {
+        const hintsId = `hint-u${id}`
+        formContainer.appendChild(GenerateHints(hints, hintsId))
+        input.setAttribute("list", hintsId)
+    }
 
     const label = document.createElement('label')
     label.htmlFor = inputId
     label.innerText = fieldName
+    formContainer.appendChild(label)
 
     container.appendChild(formContainer)
-    formContainer.appendChild(input)
-    formContainer.appendChild(label)
     return container
 }
 
