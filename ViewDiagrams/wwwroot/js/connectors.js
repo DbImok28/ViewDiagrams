@@ -11,6 +11,11 @@ function GetConnectorStyle(type) {
             return {
                 "MarkerEnd": "arrow-end"
             }
+        case "Dependence":
+            return {
+                "Dashes": dashedLine,
+                "MarkerEnd": "arrow-end"
+            }
         case "Aggregation":
             return {
                 "MarkerStart": "elongated-romb-nofill-start"
@@ -35,9 +40,9 @@ function GetConnectorStyle(type) {
     }
 }
 
-function ClearConnectors() {
-    while (workspaceSvgContainer.firstChild)
-        workspaceSvgContainer.removeChild(workspaceSvgContainer.lastChild)
+function ClearConnectorsSvgContainer() {
+    while (connectorsSvgContainer.firstChild)
+        connectorsSvgContainer.removeChild(connectorsSvgContainer.lastChild)
 }
 
 function AddConnector(fromPos, toPos, type) {
@@ -59,7 +64,7 @@ function AddConnector(fromPos, toPos, type) {
     if (connectorStyle.MarkerEnd !== undefined)
         line.setAttributeNS(null, "marker-end", `url(#${connectorStyle.MarkerEnd})`)
 
-    workspaceSvgContainer.appendChild(line)
+    connectorsSvgContainer.appendChild(line)
 }
 
 function FindIntersectionPoint(p1, p2, rect) {
@@ -110,14 +115,14 @@ function CreateDiagramConnector(diagramFrom, diagramTo, type) {
     let diagramFromPos = GetTranslateXY(diagramFrom.Element)
     let diagramFromClientRect = diagramFrom.Element.getBoundingClientRect()
     let diagramFromRect = ClientRectToArrRect(diagramFromPos, diagramFromClientRect)
-    let diagramFromHeaderClientRect = diagramFrom.Element.querySelector('.draggable-header').getBoundingClientRect()
+    let diagramFromHeaderClientRect = diagramFrom.Element.getElementsByClassName('draggable-header')[0].getBoundingClientRect()
     let diagramFromRectCenter = PosToRectCenter(diagramFromPos, diagramFromHeaderClientRect)
 
 
     let diagramToPos = GetTranslateXY(diagramTo.Element)
     let diagramToClientRect = diagramTo.Element.getBoundingClientRect()
     let diagramToRect = ClientRectToArrRect(diagramToPos, diagramToClientRect)
-    let diagramToHeaderClientRect = diagramTo.Element.querySelector('.draggable-header').getBoundingClientRect()
+    let diagramToHeaderClientRect = diagramTo.Element.getElementsByClassName('draggable-header')[0].getBoundingClientRect()
     let diagramToRectCenter = PosToRectCenter(diagramToPos, diagramToHeaderClientRect)
 
 
@@ -125,11 +130,11 @@ function CreateDiagramConnector(diagramFrom, diagramTo, type) {
     let toPos = FindIntersectionPoint(diagramFromRectCenter, diagramToRectCenter, diagramToRect)
 
     if (fromPos !== null && toPos !== null)
-        AddConnector(fromPos, toPos, type)
+        AddConnector(getPosOnGrid(fromPos), getPosOnGrid(toPos), type)
 }
 
 function GenerateDiagramsConnectors() {
-    ClearConnectors()
+    ClearConnectorsSvgContainer()
     workspaceDocument.Connectors.forEach((connector) => {
         let diagramFrom = workspaceDocument.Diagrams.find((x) => x.Name === connector.From)
         let diagramTo = workspaceDocument.Diagrams.find((x) => x.Name === connector.To)

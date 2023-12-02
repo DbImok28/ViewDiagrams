@@ -13,7 +13,6 @@ function setScrollAtCenter(workspace_view, workspace) {
 
 let gridSnap = 10
 function getPosOnGrid(pos) {
-    //setElementPosition(elem, Math.round(pos.x / gridSnap) * gridSnap, Math.round(pos.y / gridSnap) * gridSnap)
     return {
         x: Math.round(pos.x / gridSnap) * gridSnap,
         y: Math.round(pos.y / gridSnap) * gridSnap
@@ -45,7 +44,6 @@ function GetTranslateXY(elem) {
 
 function startDragMove(e, elem, onMoveFunc, onEndMove) {
     e.preventDefault()
-
 
     let curPos = {
         x: e.clientX,
@@ -126,9 +124,9 @@ function makeWorkSpace(workspace) {
 
     function onClick(e) {
         let dragElem = e.target
-        if (dragElem.className === "draggable-header") {
+        if (dragElem.getAttribute("class") === "draggable-header") {
             let diagramElem = dragElem.closest('.diagram')
-            if (diagramElem !== undefined) {
+            if (diagramElem !== null) {
                 let diagramId = GetDiagramIdByElement(dragElem.closest('.diagram'))
                 GenerateDetailsPanelById(diagramId)
                 startDragMove(e, dragElem.closest('.draggable'),
@@ -140,8 +138,8 @@ function makeWorkSpace(workspace) {
                         let diagram = GetDiagramById(diagramId)
                         let gridPos = getPosOnGrid(pos)
                         if (diagram.Position.X !== gridPos.x || diagram.Position.Y !== gridPos.y) {
-                            diagram.Position.X = pos.x
-                            diagram.Position.Y = pos.y
+                            diagram.Position.X = gridPos.x
+                            diagram.Position.Y = gridPos.y
                             UpateJsonDocumentViewer()
                             RegenerateDetailsPanel()
                             RegenerateDiagramConnectors(diagramId)
@@ -168,7 +166,10 @@ function makeWorkSpace(workspace) {
         if (dragDiagramType === "") return
         e.preventDefault()
 
-        prevDiagramElem = undefined
+        if (prevDiagramElem !== undefined) {
+            prevDiagramElem.remove()
+            prevDiagramElem = undefined
+        }
 
         AddDiagram(CreateDiagram(dragDiagramType, getPosOnGrid(getPositionInWorkspaceByEvent(workspace, e))))
         dragDiagramType = ""
@@ -180,13 +181,12 @@ function makeWorkSpace(workspace) {
 
         if (prevDiagramElem === undefined) {
             prevDiagramElem = GenerateDiagram(CreateDiagram(dragDiagramType, { x: 0, y: 0 }))
-            workspace.appendChild(prevDiagramElem)
+            diagramsSvgContainer.appendChild(prevDiagramElem)
         }
         let pos = getPosOnGrid(getPositionInWorkspaceByEvent(workspace, e))
         pos.x = pos.x + 5
         pos.y = pos.y + 5
         setElementPosition(prevDiagramElem, pos)
-        //console.log("o")
     }
 
     function onDragLeave(e) {
@@ -197,7 +197,6 @@ function makeWorkSpace(workspace) {
             prevDiagramElem.remove()
             prevDiagramElem = undefined
         }
-        //console.log("r")
     }
 }
 
@@ -210,7 +209,6 @@ function startDragDiagram(e) {
 document.addEventListener('DOMContentLoaded', function () {
     let diagList = document.getElementsByClassName("add-diag")
     for (let i = 0; i < diagList.length; i++) {
-        console.log("diag")
         diagList[i].setAttribute("draggable", "true")
         diagList[i].ondragstart = startDragDiagram
     }

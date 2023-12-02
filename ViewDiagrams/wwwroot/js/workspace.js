@@ -111,13 +111,28 @@ function RemoveSelectedDiagram() {
     }
 }
 
-let workspaceSvgContainer = undefined
+let diagramsSvgContainer = undefined
+let connectorsSvgContainer = undefined
 function CreateWorkspaceSvgContainer() {
     const xmlns = "http://www.w3.org/2000/svg";
-    workspaceSvgContainer = document.createElementNS(xmlns, "svg")
-    workspaceSvgContainer.classList.add("connector")
+    let workspaceSvgContainer = document.createElementNS(xmlns, "svg")
+    workspaceSvgContainer.setAttributeNS(null, "width", "100%")
+    workspaceSvgContainer.setAttributeNS(null, "height", "100%")
+    workspaceSvgContainer.classList.add("svg-container")
+
+    diagramsSvgContainer = document.createElementNS(xmlns, "g")
+    diagramsSvgContainer.setAttributeNS(null, "width", "100%")
+    diagramsSvgContainer.setAttributeNS(null, "height", "100%")
+    workspaceSvgContainer.appendChild(diagramsSvgContainer)
+
+    connectorsSvgContainer = document.createElementNS(xmlns, "g")
+    connectorsSvgContainer.setAttributeNS(null, "width", "100%")
+    connectorsSvgContainer.setAttributeNS(null, "height", "100%")
+    workspaceSvgContainer.appendChild(connectorsSvgContainer)
+
     workspace.appendChild(workspaceSvgContainer)
 }
+CreateWorkspaceSvgContainer()
 
 function UpdateAllDiagrams() {
     RegenerateDetailsPanel()
@@ -194,8 +209,6 @@ connection.on("Update", function (newData, jsonDocument) {
     console.log("update:" + newData)
     SetAllInputFieldsFromJson(newData)
     workspaceDocument = JSON.parse(jsonDocument)
-    //console.log("- doc:" + jsonDocument)
-
     UpdateAllDiagrams()
 })
 
@@ -216,6 +229,33 @@ window.onbeforeunload = function (event) {
 }
 
 document.onkeydown = (e) => {
+    console.log(e.code)
     if (e.code === 'Delete')
         RemoveSelectedDiagram()
+    else {
+        let needUpdate = false
+        switch (e.code) {
+            case 'ArrowUp':
+                GetDiagramById(currentSelectedDiagramIndex).Position.Y -= gridSnap
+                needUpdate = true
+                break
+            case 'ArrowDown':
+                GetDiagramById(currentSelectedDiagramIndex).Position.Y += gridSnap
+                needUpdate = true
+                break
+            case 'ArrowLeft':
+                GetDiagramById(currentSelectedDiagramIndex).Position.X -= gridSnap
+                needUpdate = true
+                break
+            case 'ArrowRight':
+                GetDiagramById(currentSelectedDiagramIndex).Position.X += gridSnap
+                needUpdate = true
+                break
+            default:
+        }
+        if (needUpdate) {
+            UpdateCurrentDiagram()
+            e.preventDefault()
+        }
+    }
 }

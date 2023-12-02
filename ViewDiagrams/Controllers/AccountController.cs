@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using lab3_identity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ViewDiagrams.Models;
@@ -22,10 +23,8 @@ namespace ViewDiagrams.Controllers
 			_context = context;
 		}
 
-		public IActionResult Login(string? returnUrl = null)
-		{
-			return View(new LoginViewModel() { ReturnUrl = returnUrl });
-		}
+		public IActionResult Login(string? returnUrl = null) => View(new LoginViewModel() { ReturnUrl = returnUrl });
+
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -57,10 +56,7 @@ namespace ViewDiagrams.Controllers
 			return View(model);
 		}
 
-		public IActionResult Register(string? returnUrl = null)
-		{
-			return View(new RegisterViewModel() { ReturnUrl = returnUrl });
-		}
+		public IActionResult Register(string? returnUrl = null) => View(new RegisterViewModel() { ReturnUrl = returnUrl });
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -88,6 +84,7 @@ namespace ViewDiagrams.Controllers
 				TempData["Error"] = newUserResponce.Errors.First().Description;
 				return View(model);
 			}
+
 			await _signInManager.SignInAsync(newUser, model.RememberPassword);
 
 			if (model.ReturnUrl != null)
@@ -140,6 +137,42 @@ namespace ViewDiagrams.Controllers
 		{
 			await _signInManager.SignOutAsync();
 			return RedirectToAction(nameof(Login));
+		}
+
+		[Authorize]
+		public IActionResult ChangePassword() => View(new ChangePasswordViewModel());
+
+		[HttpPost]
+		[Authorize]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+			{
+				ModelState.AddModelError(string.Empty, "Wrong user claim principal.");
+				return View();
+			}
+
+			var passwordCheck = await _userManager.CheckPasswordAsync(user, model.OldPassword);
+			if (!passwordCheck)
+			{
+				ModelState.AddModelError(string.Empty, "Old password is incorrect.");
+				return View();
+			}
+
+			var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
+			var result = await _userManager.ResetPasswordAsync(user!, token, model.NewPassword);
+			if (!result.Succeeded)
+			{
+				ModelState.AddModelError(string.Empty, "Fail change password.");
+				return View();
+			}
+
+			if (model.ReturnUrl != null) return LocalRedirect(model.ReturnUrl);
+			else return RedirectToAction("Index", "Home");
 		}
 
 		[Authorize]
