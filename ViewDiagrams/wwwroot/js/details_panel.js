@@ -1,5 +1,42 @@
 ﻿'use strict'
 
+function GenerateInputHints() {
+    if ("") {
+
+    }
+}
+
+function GetRelationInputHints(inputName) {
+    if (inputName == "Type") {
+        return ["Association", "Dependence", "Aggregation", "Composition", "Implementation", "Generalization"]
+    } else if (inputName == "From" || inputName == "To") {
+        return workspaceDocument.Diagrams.map(x => x.Name)
+    }
+    return null
+}
+
+function GenerateHints(hints, hintsId) {
+    //< id="hints">
+    //  <option value="Подсказка 1">
+    //  <option value="Подсказка 2">
+    //  <option value="Подсказка 3">
+    //  <!-- Добавьте здесь свои подсказки -->
+    //</datalist>
+
+    const datalist = document.createElement('datalist')
+    datalist.id = hintsId
+
+    hints.forEach((hint) => {
+        if (hint !== undefined) {
+            const option = document.createElement('option')
+            option.value = hint
+            datalist.appendChild(option)
+        }
+    })
+
+    return datalist
+}
+
 let uniqueInputFieldId = 0
 function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () => {
     RegenerateCurrentDiagram()
@@ -34,7 +71,7 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
 
 // List
 
-function GenerateListHeader(name, items, genPropetyFunc, onAddFunc = UpdateCurrentDiagram) {
+function GenerateListHeader(name, items, genPropetyFunc, useAddButton, onAddFunc = UpdateCurrentDiagram) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
 
@@ -46,50 +83,55 @@ function GenerateListHeader(name, items, genPropetyFunc, onAddFunc = UpdateCurre
     p.innerText = name
     li.appendChild(p)
 
-    const addButton = document.createElement('button')
-    addButton.classList.add('btn', 'p-0', 'ms-auto')
-    addButton.onclick = function () {
-        let newProp = genPropetyFunc(name)
-        if (newProp !== undefined) {
-            items.push(newProp)
-            onAddFunc(newProp)
+    if (useAddButton) {
+        const addButton = document.createElement('button')
+        addButton.classList.add('btn', 'p-0', 'ms-auto')
+        addButton.onclick = function () {
+            let newProp = genPropetyFunc(name)
+            if (newProp !== undefined) {
+                items.push(newProp)
+                onAddFunc(newProp)
+            }
         }
+
+        const addButtonIcon = document.createElement('i')
+        addButtonIcon.classList.add('bi', 'bi-plus-circle', 'fs-5')
+        addButton.appendChild(addButtonIcon)
+        li.appendChild(addButton)
     }
-
-    const addButtonIcon = document.createElement('i')
-    addButtonIcon.classList.add('bi', 'bi-plus-circle', 'fs-5')
-    addButton.appendChild(addButtonIcon)
-
-    li.appendChild(addButton)
 
     ul.appendChild(li)
     return ul
 }
 
-function GenerateListItem(itemElem, items, index, onRemoveFunc = UpdateCurrentDiagram) {
+function GenerateListItem(itemElem, items, index, useRemoveButton, onRemoveFunc = UpdateCurrentDiagram) {
     const li = document.createElement('li')
     li.classList.add('list-group-item', 'd-flex', 'flex-row')
 
-    const removeButton = document.createElement('button')
-    removeButton.classList.add('btn', 'p-0', 'border-0', 'mt-2', 'align-self-start')
-    removeButton.onclick = function () {
-        items.splice(index, 1)
-        onRemoveFunc(index)
-    }
-
-    const removeButtonIcon = document.createElement('i')
-    removeButtonIcon.classList.add('bi', 'bi-x', 'fs-5')
-    removeButton.appendChild(removeButtonIcon)
-
     li.appendChild(itemElem)
-    li.appendChild(removeButton)
+
+    if (useRemoveButton) {
+        const removeButton = document.createElement('button')
+        removeButton.classList.add('btn', 'p-0', 'border-0', 'mt-2', 'align-self-start')
+        removeButton.onclick = function () {
+            items.splice(index, 1)
+            onRemoveFunc(index)
+        }
+
+        const removeButtonIcon = document.createElement('i')
+        removeButtonIcon.classList.add('bi', 'bi-x', 'fs-5')
+        removeButton.appendChild(removeButtonIcon)
+
+        li.appendChild(removeButton)
+    }
     return li
 }
 
 function GenerateListItems(name, items, genPropetyFunc) {
-    let list = GenerateListHeader(name, items, genPropetyFunc)
+    let canAdd = genPropetyFunc(name) !== undefined
+    let list = GenerateListHeader(name, items, genPropetyFunc, canAdd)
     for (var i = 0; i < items.length; i++) {
-        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, genPropetyFunc), items, i,))
+        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, genPropetyFunc), items, i, canAdd))
     }
     return list
 }
@@ -151,6 +193,48 @@ function GenerateParametersPanel(diagram) {
     elements.forEach((elem) => parametersPanel.appendChild(elem))
 }
 
+
+
+
+function GenerateRelationshipTextField(fieldName, fieldValue, sourceObject, onChange = () => {
+    RegenerateCurrentDiagram()
+    UpateJsonDocumentViewer()
+}) {
+    const container = document.createElement('div')
+    container.classList.add('col-md', 'mt-1')
+
+    const formContainer = document.createElement('div')
+    formContainer.classList.add('form-floating')
+
+    const id = ++uniqueInputFieldId
+    const inputId = `input-u${id}`
+
+    const input = document.createElement('input')
+    input.classList.add('form-control')
+    input.id = inputId
+    input.value = fieldValue.toString()
+    input.oninput = function () {
+        sourceObject[fieldName] = input.value
+        onChange()
+    }
+    formContainer.appendChild(input)
+
+    const hints = GetRelationInputHints(fieldName)
+    if (hints !== null) {
+        const hintsId = `hint-u${id}`
+        formContainer.appendChild(GenerateHints(hints, hintsId))
+        input.setAttribute("list", hintsId)
+    }
+
+    const label = document.createElement('label')
+    label.htmlFor = inputId
+    label.innerText = fieldName
+    formContainer.appendChild(label)
+
+    container.appendChild(formContainer)
+    return container
+}
+
 function GenerateRelationshipListItem(name, object) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
@@ -164,7 +248,7 @@ function GenerateRelationshipListItem(name, object) {
     propNames.forEach((propName) => {
         const li = document.createElement('li')
         li.classList.add('list-group-item')
-        li.appendChild(GenerateTextField(propName, object[propName], object, () => { RegenerateCurrentDiagramConnectors() }))
+        li.appendChild(GenerateRelationshipTextField(propName, object[propName], object, () => { RegenerateCurrentDiagramConnectors() }))
         ul.appendChild(li)
     })
     return ul
@@ -179,12 +263,12 @@ function GenerateRelationshipPanelListItems(diagram) {
             "To": "None"
         }
     }
-    let list = GenerateListHeader("Relationship", relations, propGenFunc, (newProp) => {
+    let list = GenerateListHeader("Relationship", relations, propGenFunc, true, (newProp) => {
         UpdateCurrentDiagram()
     })
     for (var i = 0; i < relations.length; i++) {
         if (diagram.Name === relations[i].From || diagram.Name === relations[i].To)
-            list.appendChild(GenerateListItem(GenerateRelationshipListItem(i, relations[i]), relations, i))
+            list.appendChild(GenerateListItem(GenerateRelationshipListItem(i, relations[i]), relations, i, true))
     }
     return list
 }
