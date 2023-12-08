@@ -229,7 +229,7 @@ window.onbeforeunload = function (event) {
 }
 
 document.onkeydown = (e) => {
-    console.log(e.code)
+    //console.log(e.code)
     if (e.code === 'Delete')
         RemoveSelectedDiagram()
     else {

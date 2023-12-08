@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Text.Json;
 using ViewDiagrams.Models;
@@ -12,11 +13,13 @@ namespace ViewDiagrams.Hubs
     {
         private readonly WorkspaceHubHelpers _helper;
         private readonly ChatRepository _chatRepository;
+        private readonly UserRepository _userRepository;
 
         public WorkspaceHub(ApplicationDbContext context)
         {
             _helper = new WorkspaceHubHelpers(context);
             _chatRepository = new ChatRepository(context);
+            _userRepository = new UserRepository(context);
         }
 
         public async Task Sink(string data, string documentInJson)
@@ -82,6 +85,19 @@ namespace ViewDiagrams.Hubs
                 var users = _helper.GetUsers(workspace);
                 var userInJson = JsonSerializer.Serialize(users.Select(x => x.UserName));
                 await Clients.Caller.SendAsync("UserListResult", userInJson);
+            }
+            catch (Exception e)
+            {
+                throw new HubException(e.Message);
+            }
+        }
+
+        public async Task FindUsersByName(string name)
+        {
+            try
+            {
+                var userList = _userRepository.Select(user => user.UserName!.Contains(name, StringComparison.OrdinalIgnoreCase)).Take(10).Select(x => x.UserName);
+                await Clients.Caller.SendAsync("FindUsersResult", userList);
             }
             catch (Exception e)
             {
