@@ -30,6 +30,7 @@ function GetConnectorStyle(type) {
                 "MarkerEnd": "triangle-nofill-end"
             }
         case "Generalization":
+        case "Inheritance":
             return {
                 "MarkerEnd": "triangle-nofill-end"
             }
