@@ -19,10 +19,6 @@ namespace ViewDiagrams.Models
         [JsonIgnore]
         public string DocumentInJson { get; set; } = "\"Diagrams\": [{}]";
 
-        public string Test { get; set; } = "test";
-        public bool UseTest { get; set; } = false;
-        public int UseTest2 { get; set; } = 0;
-
         public Workspace Update(Workspace newWorkspace, bool isAdmin)
         {
             Name = newWorkspace.Name;
@@ -30,9 +26,6 @@ namespace ViewDiagrams.Models
             if (isAdmin)
             {
                 IsPublic = newWorkspace.IsPublic;
-                Test = newWorkspace.Test;
-                UseTest = newWorkspace.UseTest;
-                UseTest2 = newWorkspace.UseTest2;
             }
             return newWorkspace;
         }

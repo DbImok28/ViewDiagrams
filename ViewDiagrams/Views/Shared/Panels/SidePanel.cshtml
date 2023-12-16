@@ -1,5 +1,7 @@
 ﻿<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-light border-end side-panel">
     <ul class="nav nav-pills nav-flush flex-column mb-auto text-center" role="tablist">
+        @if (!ViewBag.IsGuest)
+        {   
         <li class="nav-item">
             <button class="nav-link active py-3 border-bottom w-100" id="diagram-list-tab"
                     data-bs-toggle="tab" data-bs-target="#diagram-list" type="button" role="tab" aria-controls="diagram-list" aria-selected="true"
@@ -7,6 +9,7 @@
                 <i class="bi bi-diagram-2 fs-4"></i>
             </button>
         </li>
+        }
         <li>
             <button class="nav-link py-3 border-bottom w-100" id="workspace-settings-tab"
                     data-bs-toggle="tab" data-bs-target="#settings-WorkspaceSettings" type="button" role="tab" aria-controls="settings-WorkspaceSettings" aria-selected="false">

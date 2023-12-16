@@ -223,9 +223,11 @@ connection.start().then(function () {
 })
 
 // Message on close page
-window.onbeforeunload = function (event) {
-    event.preventDefault()
-    event.returnValue = ''
+if (!isGuest) {
+    window.onbeforeunload = function (event) {
+        event.preventDefault()
+        event.returnValue = ''
+    }
 }
 
 document.onkeydown = (e) => {

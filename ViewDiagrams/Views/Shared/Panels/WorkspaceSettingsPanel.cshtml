@@ -6,7 +6,7 @@
                 Workspace settings
             </button>
             <div class="collapse show" id="workspace-settings-collapse" style="">
-                @await Html.PartialAsync("Templates/InputField", new InputField("Name", ViewBag.Workspace.Name))
+                @await Html.PartialAsync("Templates/InputField", new InputField("Name", ViewBag.Workspace.Name, ViewBag.IsGuest))
             </div>
         </li>
     </ul>

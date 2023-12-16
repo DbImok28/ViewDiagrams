@@ -7,74 +7,75 @@ using ViewDiagrams.Models.Database;
 
 namespace ViewDiagrams
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers(options =>
-            {
-                options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
-            });
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                //options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection"));
-                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"));
-            });
+			builder.Services.AddControllers(options =>
+			{
+				options.InputFormatters.Insert(0, new RawJsonBodyInputFormatter());
+			});
+			builder.Services.AddControllersWithViews();
+			builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			{
+				//options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection"));
+				options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"));
+			});
 
-            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 1;
+			builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+			{
+				options.Password.RequireDigit = false;
+				options.Password.RequireLowercase = false;
+				options.Password.RequireUppercase = false;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequiredLength = 1;
 
-                options.SignIn.RequireConfirmedEmail = false;
-                options.SignIn.RequireConfirmedAccount = false;
-                options.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddMemoryCache();
-            builder.Services.AddSession();
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
-            builder.Services.AddSignalR();
+				options.SignIn.RequireConfirmedEmail = false;
+				options.SignIn.RequireConfirmedAccount = false;
+				options.User.RequireUniqueEmail = true;
+			}).AddEntityFrameworkStores<ApplicationDbContext>();
+			builder.Services.AddMemoryCache();
+			builder.Services.AddSession();
+			builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+				.AddCookie();
 
-            var app = builder.Build();
+			builder.Services.AddSignalR();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+			var app = builder.Build();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+			// Configure the HTTP request pipeline.
+			if (!app.Environment.IsDevelopment())
+			{
+				app.UseExceptionHandler("/Home/Error");
+				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+				app.UseHsts();
+			}
 
-            app.UseRouting();
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 
-            app.UseAuthorization();
+			app.UseRouting();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=WorkSpace}/{action=Index}");
+			app.UseAuthorization();
 
-            app.MapHub<WorkspaceHub>("/api/workspace");
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                if (context.Database.GetPendingMigrations().Any())
-                {
-                    context.Database.Migrate();
-                }
-            }
+			app.MapControllerRoute(
+				name: "default",
+				pattern: "{controller=WorkSpace}/{action=Index}");
 
-            app.Run();
-        }
-    }
+			app.MapHub<WorkspaceHub>("/api/workspace");
+			using (var scope = app.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+				var context = services.GetRequiredService<ApplicationDbContext>();
+				if (context.Database.GetPendingMigrations().Any())
+				{
+					context.Database.Migrate();
+				}
+			}
+
+			app.Run();
+		}
+	}
 }

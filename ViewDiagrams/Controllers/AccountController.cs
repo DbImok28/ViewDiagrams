@@ -23,39 +23,6 @@ namespace ViewDiagrams.Controllers
 			_context = context;
 		}
 
-		public IActionResult Login(string? returnUrl = null) => View(new LoginViewModel() { ReturnUrl = returnUrl });
-
-
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Login(LoginViewModel model)
-		{
-			if (!ModelState.IsValid) return View(model);
-
-			var user = await _userManager.FindByEmailAsync(model.Email);
-			if (user != null)
-			{
-				var passwordCheck = await _userManager.CheckPasswordAsync(user, model.Password);
-				if (passwordCheck)
-				{
-					var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberPassword, false);
-					if (result.Succeeded)
-					{
-						if (model.ReturnUrl != null)
-						{
-							return LocalRedirect(model.ReturnUrl);
-						}
-						else
-						{
-							return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
-						}
-					}
-				}
-			}
-			TempData["Error"] = "Wrong credentials. Please try again.";
-			return View(model);
-		}
-
 		public IActionResult Register(string? returnUrl = null) => View(new RegisterViewModel() { ReturnUrl = returnUrl });
 
 		[HttpPost]
@@ -95,6 +62,38 @@ namespace ViewDiagrams.Controllers
 			{
 				return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
 			}
+		}
+
+		public IActionResult Login(string? returnUrl = null) => View(new LoginViewModel() { ReturnUrl = returnUrl });
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(LoginViewModel model)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			var user = await _userManager.FindByEmailAsync(model.Email);
+			if (user != null)
+			{
+				var passwordCheck = await _userManager.CheckPasswordAsync(user, model.Password);
+				if (passwordCheck)
+				{
+					var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberPassword, false);
+					if (result.Succeeded)
+					{
+						if (model.ReturnUrl != null)
+						{
+							return LocalRedirect(model.ReturnUrl);
+						}
+						else
+						{
+							return RedirectToAction(nameof(WorkspaceController.Index), nameof(WorkspaceController).Replace("Controller", ""));
+						}
+					}
+				}
+			}
+			TempData["Error"] = "Wrong credentials. Please try again.";
+			return View(model);
 		}
 
 		//private async void SendConfirmEmail(User user)
