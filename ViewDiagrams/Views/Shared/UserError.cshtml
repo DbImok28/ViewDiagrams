@@ -9,19 +9,19 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div class="text-center">
-            Open profile? <a href="/Workspace/Create">Create</a>
+            Open profile? <a asp-controller="Workspace" asp-action="Create">Create</a>
         </div>
         <div class="text-center">
-            Create a workspace? <a href="/Account/Profile">Create</a>
+            Create a workspace? <a asp-controller="Account" asp-action="Profile">Create</a>
         </div>
     }
     else
     {
         <div class="text-center">
-            Do you want to log into your account? <a href="/Account/Login">Login</a>
+            Do you want to log into your account? <a  asp-controller="Account" asp-action="Login">Login</a>
         </div>
         <div class="text-center">
-            Don't have an account? <a href="/Account/Register">Register</a>
+            Don't have an account? <a asp-controller="Account" asp-action="Register">Register</a>
         </div>
     }
 </div>

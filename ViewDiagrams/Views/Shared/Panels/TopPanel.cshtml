@@ -30,19 +30,19 @@
 				</li>
 				<li><hr class="dropdown-divider"></li>
 			}
-			<li><a class="dropdown-item" href="/Workspace/Create">Create workspace</a></li>
-			<li><a class="dropdown-item" href="/Account/Profile">Profile</a></li>
+			<li><a asp-controller="Workspace" asp-action="Create" class="dropdown-item">Create workspace</a></li>
+			<li><a asp-controller="Account" asp-action="Profile" class="dropdown-item">Profile</a></li>
 
 			<li><hr class="dropdown-divider"></li>
 
 			<li>
 				@if (User.Identity.IsAuthenticated)
 				{
-					<a class="dropdown-item" href="Account/Logout">Log out</a>
+					<a asp-controller="Account" asp-action="Logout" class="dropdown-item">Log out</a>
 				}
 				else
 				{
-					<a class="dropdown-item" href="Account/Login">Sign in</a>
+					<a asp-controller="Account" asp-action="Login" class="dropdown-item">Sign in</a>
 				}
 			</li>
 		</ul>
