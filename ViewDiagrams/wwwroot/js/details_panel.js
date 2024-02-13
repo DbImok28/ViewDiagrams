@@ -94,6 +94,7 @@ function GenerateListHeader(name, items, propertyTemplates, useAddButton, onAddF
         const addButton = document.createElement('button')
         addButton.classList.add('btn', 'p-0', 'ms-auto')
         addButton.onclick = function () {
+            console.log(propertyTemplates)
             let newProp = propertyTemplates.get(name)
             if (newProp !== undefined) {
                 items.push(newProp)
@@ -266,14 +267,16 @@ function GenerateRelationshipListItem(name, object) {
 
 function GenerateRelationshipPanelListItems(diagram) {
     let relations = workspaceDocument.Connectors
-    const propGenFunc = () => {
-        return {
-            "Type": "Aggregation",
-            "From": diagram.Name,
-            "To": "None"
+    const propertyTemplates = {
+        "get": () => {
+            return {
+                "Type": "Aggregation",
+                "From": diagram.Name,
+                "To": "None"
+            }
         }
     }
-    let list = GenerateListHeader("Relationship", relations, propGenFunc, true, (newProp) => {
+    let list = GenerateListHeader("Relationship", relations, propertyTemplates, true, (newProp) => {
         UpdateCurrentDiagram()
     })
     for (var i = 0; i < relations.length; i++) {

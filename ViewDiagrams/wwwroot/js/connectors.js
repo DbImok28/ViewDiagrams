@@ -5,79 +5,82 @@ const dashedLine = "10,10"
 const dashDottedLine = "20,10,5,10"
 const dashedLineWithTwoDots = "20,10,5,5,5,10"
 
-//const ConnectorStyles = {
-//    "Association":
-//    {
-//        "MarkerEnd": "arrow-end"
-//    },
-//    "Dependence":
-//    {
-//        "Dashes": dashedLine,
-//        "MarkerEnd": "arrow-end"
-//    },
-//    "Aggregation":
-//    {
-//        "MarkerStart": "elongated-romb-nofill-start"
-//    },
-//    "Composition":
-//    {
-//        "MarkerStart": "elongated-romb-start"
-//    },
-//    "Implementation":
-//    {
-//        "Dashes": dashedLine,
-//        "MarkerEnd": "triangle-nofill-end"
-//    },
-//    "Generalization":
-//    {
-//        "MarkerEnd": "triangle-nofill-end"
-//    },
-//    "Inheritance":
-//    {
-//        "MarkerEnd": "triangle-nofill-end"
-//    },
-//    "Default":
-//    {
-//        "MarkerEnd": "arrow-end"
-//    }
-//}
+let ConnectorStyles = new Map([
+    ["Association",
+        {
+            "MarkerEnd": "arrow-end"
+        }],
+    ["Dependence",
+        {
+            "Dashes": dashedLine,
+            "MarkerEnd": "arrow-end"
+        }],
+    ["Aggregation",
+        {
+            "MarkerStart": "elongated-romb-nofill-start"
+        }],
+    ["Composition",
+        {
+            "MarkerStart": "elongated-romb-start"
+        }],
+    ["Implementation",
+        {
+            "Dashes": dashedLine,
+            "MarkerEnd": "triangle-nofill-end"
+        }],
+    ["Generalization",
+        {
+            "MarkerEnd": "triangle-nofill-end"
+        }],
+    ["Inheritance",
+        {
+            "MarkerEnd": "triangle-nofill-end"
+        }],
+    ["Default",
+        {
+            "MarkerEnd": "arrow-end"
+        }]
+])
 
 
 function GetConnectorStyle(type) {
+    let style = ConnectorStyles.get(type)
+    if (style !== undefined) return style
+    return ConnectorStyles.get("Default")
     //return ConnectorStyles[type]
-    switch (type) {
-        case "Association":
-            return {
-                "MarkerEnd": "arrow-end"
-            }
-        case "Dependence":
-            return {
-                "Dashes": dashedLine,
-                "MarkerEnd": "arrow-end"
-            }
-        case "Aggregation":
-            return {
-                "MarkerStart": "elongated-romb-nofill-start"
-            }
-        case "Composition":
-            return {
-                "MarkerStart": "elongated-romb-start"
-            }
-        case "Implementation":
-            return {
-                "Dashes": dashedLine,
-                "MarkerEnd": "triangle-nofill-end"
-            }
-        case "Generalization":
-        case "Inheritance":
-            return {
-                "MarkerEnd": "triangle-nofill-end"
-            }
-        default:
-            return {
-                "MarkerEnd": "arrow-end"
-            }
-    }
+    //switch (type) {
+    //    case "Association":
+    //        return {
+    //            "MarkerEnd": "arrow-end"
+    //        }
+    //    case "Dependence":
+    //        return {
+    //            "Dashes": dashedLine,
+    //            "MarkerEnd": "arrow-end"
+    //        }
+    //    case "Aggregation":
+    //        return {
+    //            "MarkerStart": "elongated-romb-nofill-start"
+    //        }
+    //    case "Composition":
+    //        return {
+    //            "MarkerStart": "elongated-romb-start"
+    //        }
+    //    case "Implementation":
+    //        return {
+    //            "Dashes": dashedLine,
+    //            "MarkerEnd": "triangle-nofill-end"
+    //        }
+    //    case "Generalization":
+    //    case "Inheritance":
+    //        return {
+    //            "MarkerEnd": "triangle-nofill-end"
+    //        }
+    //    default:
+    //        return {
+    //            "MarkerEnd": "arrow-end"
+    //        }
+    //}
 }
 
 function ClearConnectorsSvgContainer() {
