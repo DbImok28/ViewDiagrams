@@ -48,115 +48,104 @@ function AccessModifierToChar(accessModifier) {
     }
 }
 
-
-function CreateDiagram(type, pos) {
-    switch (type) {
-        case "ClassDiagram": return {
-            "Type": "ClassDiagram",
-            "Name": "NewClass",
-            "Comments": [],
-            "TemplateArguments": [],
-            "Attributes": [],
-            "Properties": [
-                {
-                    "Type": "int",
-                    "Name": "New Property",
-                    "AccessModifier": "Public"
-                },
-            ],
-            "Methods": [
-                {
-                    "AccessModifier": "Public",
-                    "ReturnType": "string",
-                    "Name": "Method 1",
-                    "Arguments": [{
-                        "Type": "string",
-                        "Name": "name"
-                    }]
-                },
-            ],
-
-            "Position": { "X": pos.x, "Y": pos.y },
-
-            "Element": null
-        }
-        case "Comment": return {
-            "Type": "Comment",
-            "RowCount": 5,
-            "Content": "...",
-            "Position": { "X": pos.x, "Y": pos.y },
-
-            "Element": null
-        }
-        case "Group": return {
-            "Type": "Group",
-            "Width": 1000,
-            "Height": 500,
-            "Name": "Group",
-            "Position": { "X": pos.x, "Y": pos.y },
-
-            "Element": null
-        }
-        default:
-    }
-}
-
-
-// Generate new arrays property
-function GetGeneratePropertyFunc(diagramType) {
-    switch (diagramType) {
-        case "ClassDiagram": return GenerateClassDiagramProperty
-        case "Comment": return () => { }
-        case "Group": return () => { }
-        default:
-    }
-}
-
-function GenerateClassDiagramProperty(propName) {
-    switch (propName) {
-        case "Properties":
-            return {
-                "Type": "int",
-                "Name": "New property",
-                "AccessModifier": "Public"
-            }
-        case "Methods":
-            return {
-                "AccessModifier": "Public",
-                "ReturnType": "string",
-                "Name": "Method 1",
-                "Arguments": []
-            }
-        case "Arguments":
-            return {
+let DiagramObjectTemplates = new Map()
+DiagramObjectTemplates.set("ClassDiagram", {
+    "Name": "NewClass",
+    "Comments": [],
+    "TemplateArguments": [],
+    "Attributes": [],
+    "Properties": [
+        {
+            "Type": "int",
+            "Name": "New Property",
+            "AccessModifier": "Public"
+        },
+    ],
+    "Methods": [
+        {
+            "AccessModifier": "Public",
+            "ReturnType": "string",
+            "Name": "Method 1",
+            "Arguments": [{
                 "Type": "string",
                 "Name": "name"
-            }
-        case "Attributes":
-            return {
-                "Name": "Attribute 1",
-                "Arguments": []
-            }
-        case "TemplateArguments":
-            return {
-                "Name": "T",
-                "Type": "typename"
-            }
-        case "Comments":
-            return "Comment"
-        default:
-    }
-    return undefined
+            }]
+        },
+    ]
+})
+DiagramObjectTemplates.set("Comment", {
+    "RowCount": 5,
+    "Content": "..."
+})
+DiagramObjectTemplates.set("Group", {
+    "Width": 1000,
+    "Height": 500,
+    "Name": "Group"
+})
+
+function CreateDiagram(type, pos) {
+    let diagram = DiagramObjectTemplates.get(type)
+    diagram.Type = type
+    diagram.Position = { "X": pos.x, "Y": pos.y }
+    diagram.Element = null
+    return diagram
 }
 
-// Generate diagram SVG Element
+
+let DiagramPropertyTemplates = new Map()
+DiagramPropertyTemplates.set("ClassDiagram", new Map([
+    [
+        "Properties",
+        {
+            "Type": "int",
+            "Name": "New property",
+            "AccessModifier": "Public"
+        }],
+    [
+        "Methods",
+        {
+            "AccessModifier": "Public",
+            "ReturnType": "string",
+            "Name": "Method 1",
+            "Arguments": []
+        }],
+    [
+        "Arguments",
+        {
+            "Type": "string",
+            "Name": "name"
+        }],
+    [
+        "Attributes",
+        {
+            "Name": "Attribute 1",
+            "Arguments": []
+        }],
+    [
+        "TemplateArguments",
+        {
+            "Name": "T",
+            "Type": "typename"
+        }],
+    [
+        "Comments", "Comment"
+    ]
+]))
+function GetGeneratePropertyFunc(diagramType) {
+    return DiagramPropertyTemplates.get(diagramType)
+}
+
+
+
+let GenerateDiagramsFunctionsList = new Map()
+GenerateDiagramsFunctionsList.set("ClassDiagram", GenerateClassDiagram)
+GenerateDiagramsFunctionsList.set("Comment", GenerateCommentDiagram)
+GenerateDiagramsFunctionsList.set("Group", GenerateGroupDiagram)
+
 function GenerateDiagram(params) {
-    switch (params.Type) {
-        case "ClassDiagram": return GenerateClassDiagram(params)
-        case "Comment": return GenerateCommentDiagram(params)
-        case "Group": return GenerateGroupDiagram(params)
-        default:
-    }
+    let func = GenerateDiagramsFunctionsList.get(params.Type)
+    if (func !== undefined) return func(params)
+    return undefined;
 }
 
 function GenerateGroupDiagram(params) {

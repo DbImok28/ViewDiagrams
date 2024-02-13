@@ -78,7 +78,7 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
 
 // List
 
-function GenerateListHeader(name, items, genPropetyFunc, useAddButton, onAddFunc = UpdateCurrentDiagram) {
+function GenerateListHeader(name, items, propertyTemplates, useAddButton, onAddFunc = UpdateCurrentDiagram) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
 
@@ -94,7 +94,7 @@ function GenerateListHeader(name, items, genPropetyFunc, useAddButton, onAddFunc
         const addButton = document.createElement('button')
         addButton.classList.add('btn', 'p-0', 'ms-auto')
         addButton.onclick = function () {
-            let newProp = genPropetyFunc(name)
+            let newProp = propertyTemplates.get(name)
             if (newProp !== undefined) {
                 items.push(newProp)
                 onAddFunc(newProp)
@@ -134,18 +134,18 @@ function GenerateListItem(itemElem, items, index, useRemoveButton, onRemoveFunc 
     return li
 }
 
-function GenerateListItems(name, items, genPropetyFunc) {
-    let canAdd = genPropetyFunc(name) !== undefined
-    let list = GenerateListHeader(name, items, genPropetyFunc, canAdd)
+function GenerateListItems(name, items, propertyTemplates) {
+    let canAdd = propertyTemplates.get(name) !== undefined
+    let list = GenerateListHeader(name, items, propertyTemplates, canAdd)
     for (var i = 0; i < items.length; i++) {
-        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, genPropetyFunc), items, i, canAdd))
+        list.appendChild(GenerateListItem(GenerateInputField(i, items[i], items, propertyTemplates), items, i, canAdd))
     }
     return list
 }
 
 // Group
 
-function GenerateGroup(name, object, genPropetyFunc) {
+function GenerateGroup(name, object, propertyTemplates) {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'mt-2')
 
@@ -158,21 +158,21 @@ function GenerateGroup(name, object, genPropetyFunc) {
     propNames.forEach((propName) => {
         const li = document.createElement('li')
         li.classList.add('list-group-item')
-        li.appendChild(GenerateInputField(propName, object[propName], object, genPropetyFunc))
+        li.appendChild(GenerateInputField(propName, object[propName], object, propertyTemplates))
         ul.appendChild(li)
     })
     return ul
 }
 
-function GenerateInputField(name, value, sourceObject, genPropetyFunc) {
+function GenerateInputField(name, value, sourceObject, propertyTemplates) {
     if (typeof value === "string" || typeof value === "number") {
         return GenerateTextField(name, value, sourceObject)
     }
     else if (Array.isArray(value)) {
-        return GenerateListItems(name, value, genPropetyFunc)
+        return GenerateListItems(name, value, propertyTemplates)
     }
     else if (typeof value === "object") {
-        return GenerateGroup(name, value, genPropetyFunc)
+        return GenerateGroup(name, value, propertyTemplates)
     }
     return document.createElement('div')
 }
@@ -183,13 +183,13 @@ function GenerateParametersPanel(diagram) {
     if (diagram !== undefined) {
         let properties = Object.getOwnPropertyNames(diagram)
         if (properties.includes('Type')) {
-            let genPropetyFunc = GetGeneratePropertyFunc(diagram['Type'])
+            let propertyTemplates = GetGeneratePropertyFunc(diagram['Type'])
             properties.forEach((propName) => {
                 if (propName === 'Type') return
 
                 let propValue = IgnoreWorkspacePrivateFields(propName, diagram[propName])
                 if (propValue !== undefined)
-                    elements.push(GenerateInputField(propName, propValue, diagram, genPropetyFunc))
+                    elements.push(GenerateInputField(propName, propValue, diagram, propertyTemplates))
             })
         }
     }
@@ -295,6 +295,9 @@ function GenerateRelationshipPanel(diagram) {
     }
     elements.forEach((elem) => relationshipPanel.appendChild(elem))
 }
+
+
+
 
 function GenerateDetailsPanel(diagram) {
     GenerateRelationshipPanel(diagram)

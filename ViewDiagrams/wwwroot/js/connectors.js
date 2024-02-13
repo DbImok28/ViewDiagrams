@@ -5,7 +5,46 @@ const dashedLine = "10,10"
 const dashDottedLine = "20,10,5,10"
 const dashedLineWithTwoDots = "20,10,5,5,5,10"
 
+//const ConnectorStyles = {
+//    "Association":
+//    {
+//        "MarkerEnd": "arrow-end"
+//    },
+//    "Dependence":
+//    {
+//        "Dashes": dashedLine,
+//        "MarkerEnd": "arrow-end"
+//    },
+//    "Aggregation":
+//    {
+//        "MarkerStart": "elongated-romb-nofill-start"
+//    },
+//    "Composition":
+//    {
+//        "MarkerStart": "elongated-romb-start"
+//    },
+//    "Implementation":
+//    {
+//        "Dashes": dashedLine,
+//        "MarkerEnd": "triangle-nofill-end"
+//    },
+//    "Generalization":
+//    {
+//        "MarkerEnd": "triangle-nofill-end"
+//    },
+//    "Inheritance":
+//    {
+//        "MarkerEnd": "triangle-nofill-end"
+//    },
+//    "Default":
+//    {
+//        "MarkerEnd": "arrow-end"
+//    }
+//}
+
+
 function GetConnectorStyle(type) {
+    //return ConnectorStyles[type]
     switch (type) {
         case "Association":
             return {
