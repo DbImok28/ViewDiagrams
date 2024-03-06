@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-function GenerateInputHints(inputName) {
+function GetInputHints(inputName) {
     if (inputName == "Type" || inputName == "ReturnType") {
         return ["string", "object", "int", "float", "double", "Array", "List", "Map", "Dictionary", "Set"]
     }
@@ -14,7 +14,7 @@ function GetRelationInputHints(inputName) {
     if (inputName == "Type") {
         return ["Association", "Dependence", "Aggregation", "Composition", "Implementation", "Generalization"]
     } else if (inputName == "From" || inputName == "To") {
-        return workspaceDocument.Diagrams.map(x => x.Name)
+        return GetPage().Diagrams.map(x => x.Name)
     }
     return null
 }
@@ -60,7 +60,7 @@ function GenerateTextField(fieldName, fieldValue, sourceObject, onChange = () =>
     }
     formContainer.appendChild(input)
 
-    const hints = GenerateInputHints(fieldName)
+    const hints = GetInputHints(fieldName)
     if (hints !== null) {
         const hintsId = `hint-u${id}`
         formContainer.appendChild(GenerateHints(hints, hintsId))
@@ -94,7 +94,6 @@ function GenerateListHeader(name, items, propertyTemplates, useAddButton, onAddF
         const addButton = document.createElement('button')
         addButton.classList.add('btn', 'p-0', 'ms-auto')
         addButton.onclick = function () {
-            console.log(propertyTemplates)
             let newProp = propertyTemplates.get(name)
             if (newProp !== undefined) {
                 items.push(newProp)
@@ -259,14 +258,14 @@ function GenerateRelationshipListItem(name, object) {
     propNames.forEach((propName) => {
         const li = document.createElement('li')
         li.classList.add('list-group-item')
-        li.appendChild(GenerateRelationshipTextField(propName, object[propName], object, () => { RegenerateCurrentDiagramConnectors() }))
+        li.appendChild(GenerateRelationshipTextField(propName, object[propName], object, () => { RegenerateDiagramConnectors() }))
         ul.appendChild(li)
     })
     return ul
 }
 
 function GenerateRelationshipPanelListItems(diagram) {
-    let relations = workspaceDocument.Connectors
+    let relations = GetPage().Connectors
     const propertyTemplates = {
         "get": () => {
             return {
@@ -289,7 +288,7 @@ function GenerateRelationshipPanelListItems(diagram) {
 let relationshipPanel = document.getElementById("diagram-relationship")
 function GenerateRelationshipPanel(diagram) {
     let elements = []
-    if (diagram !== undefined) {
+    if (diagram !== undefined && diagram.Name !== undefined) {
         elements.push(GenerateRelationshipPanelListItems(diagram))
     }
 

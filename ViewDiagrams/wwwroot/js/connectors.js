@@ -47,40 +47,6 @@ function GetConnectorStyle(type) {
     let style = ConnectorStyles.get(type)
     if (style !== undefined) return style
     return ConnectorStyles.get("Default")
-    //return ConnectorStyles[type]
-    //switch (type) {
-    //    case "Association":
-    //        return {
-    //            "MarkerEnd": "arrow-end"
-    //        }
-    //    case "Dependence":
-    //        return {
-    //            "Dashes": dashedLine,
-    //            "MarkerEnd": "arrow-end"
-    //        }
-    //    case "Aggregation":
-    //        return {
-    //            "MarkerStart": "elongated-romb-nofill-start"
-    //        }
-    //    case "Composition":
-    //        return {
-    //            "MarkerStart": "elongated-romb-start"
-    //        }
-    //    case "Implementation":
-    //        return {
-    //            "Dashes": dashedLine,
-    //            "MarkerEnd": "triangle-nofill-end"
-    //        }
-    //    case "Generalization":
-    //    case "Inheritance":
-    //        return {
-    //            "MarkerEnd": "triangle-nofill-end"
-    //        }
-    //    default:
-    //        return {
-    //            "MarkerEnd": "arrow-end"
-    //        }
-    //}
 }
 
 function ClearConnectorsSvgContainer() {
@@ -178,19 +144,18 @@ function CreateDiagramConnector(diagramFrom, diagramTo, type) {
 
 function GenerateDiagramsConnectors() {
     ClearConnectorsSvgContainer()
-    workspaceDocument.Connectors.forEach((connector) => {
-        let diagramFrom = workspaceDocument.Diagrams.find((x) => x.Name === connector.From)
-        let diagramTo = workspaceDocument.Diagrams.find((x) => x.Name === connector.To)
+
+    let page = GetPage()
+    page.Connectors.forEach((connector) => {
+        let diagramFrom = page.Diagrams.find((x) => x.Name === connector.From)
+        let diagramTo = page.Diagrams.find((x) => x.Name === connector.To)
         if (diagramFrom !== undefined && diagramTo !== undefined)
             CreateDiagramConnector(diagramFrom, diagramTo, connector.Type)
     })
 }
 
-function RegenerateDiagramConnectors(index) {
+function RegenerateDiagramConnectors(index = -1) {
+    if (index === -1) index = currentSelectedDiagramIndex
     // TODO:Update by index
     GenerateDiagramsConnectors()
-}
-
-function RegenerateCurrentDiagramConnectors() {
-    RegenerateDiagramConnectors(currentSelectedDiagramIndex)
 }

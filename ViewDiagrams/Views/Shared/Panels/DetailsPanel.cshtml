@@ -1,4 +1,4 @@
-﻿<div class="ms-auto bg-white border-end right-panel">
+﻿<div class="ms-auto border-end right-panel">
     <div class="d-flex flex-row align-items-stretch flex-shrink-0 border-bottom right-tab-bar">
         <ul class="nav nav-pills nav-flush flex-row text-center" role="tablist">
             <li class="nav-item">
@@ -25,7 +25,7 @@
         </ul>
     </div>
 
-    <div class="bg-white item-panel tab-content p-3 h-100">
+    <div class="item-panel tab-content p-3 h-100">
         <div class="d-flex flex-row ">
             <button class="ms-auto btn p-0" id="remove-diagram-btn">
                 <i class="bi bi-trash fs-4 align-self-end"></i>
@@ -56,6 +56,13 @@
             <div style="height:calc(var(--down-panel-height) + 20px)"></div>
         </div>
         <div class="tab-pane fade overflow-auto h-100" id="jsonDocumentViwer-panel" role="tabpanel" aria-labelledby="jsonDocumentViwer-panel-tab">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="input-ShowFullDocument">
+                <label class="form-check-label" for="input-ShowFullDocument">
+                    ShowFullDocument
+                </label>
+            </div>
+
             <div class="collapse show" id="workspace-document-collapse" style="">
                 <label for="json-document-viewer" class="form-label">Document as Json</label>
                 <textarea class="form-control" id="json-document-viewer" rows="40" style="font-size: 0.8rem;"></textarea>

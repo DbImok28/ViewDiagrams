@@ -62,34 +62,47 @@ html {
     --right-panel-width: 340px;
     --up-panel-height: 80px;
     --down-panel-height: 40px;
+    --panel-color: #f5f5f5;
+    --border-color: green;
+    --text-color: lightgray;
 }
 
+/** {
+    border-color: var(--border-color) !important;
+}*/
+
 .side-panel {
+    background-color: var(--panel-color);
     min-width: var(--side-panel-width);
     max-width: var(--side-panel-width);
 }
 
 .item-panel {
+    background-color: var(--panel-color);
     min-width: var(--item-panel-width);
     max-width: var(--item-panel-width);
 }
 
 .right-panel {
+    background-color: var(--panel-color);
     min-width: var(--right-panel-width);
     max-width: var(--right-panel-width);
 }
 
 .up-panel {
+    background-color: var(--panel-color);
     min-height: var(--up-panel-height);
     max-height: var(--up-panel-height);
 }
 
 .down-panel {
+    background-color: var(--panel-color);
     min-height: var(--down-panel-height);
     max-height: var(--down-panel-height);
 }
 
 .right-tab-bar {
+    background-color: var(--panel-color);
     min-height: var(--side-panel-width);
     max-height: var(--side-panel-width);
 }

@@ -1,3 +1,23 @@
-﻿<div class="border-top down-panel">
-    <p></p>
+﻿<div class="border-top down-panel d-flex flex-row">
+	<div id="page-selector">
+		<button class="btn p-2 h-100 border border-2" onclick="PageSelectorSwapPage(1)">Page 1</button>
+		<button class="btn p-2 h-100 border border-2" onclick="PageSelectorSwapPage(2)">Page 2</button>
+	</div>
+
+		<div class="dropdown">
+			<a href="#"
+			   class="d-flex align-items-center justify-content-center p-1 link-dark text-decoration-none dropdown-toggle"
+			   id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+			</a>
+			<ul class="dropdown-menu dropdown-menu-end text-small shadow p-3" aria-labelledby="dropdownUser">
+				<li>Remove</li>
+				<li><hr class="dropdown-divider"></li>
+				<li>Rename</li>
+			</ul>
+		</div>
+
+
+	<button class="btn p-0" onclick="PageSelectorGeneratePage()">
+        <i class="bi bi-plus fs-3 px-2"></i>
+    </button>
 </div>

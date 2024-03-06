@@ -1,105 +1,141 @@
 ﻿'use strict'
 
+// TODO:Rename
 let workspaceDocument = {
-    "Diagrams": [
+    "Pages": [
+        {
+            "PageName": "Page 1",
+            "Diagrams": [
 
-    ],
-    "Connectors": [
+            ],
+            "Connectors": [
 
+            ]
+        }
     ]
 }
 
-function SetDefaultWorkspace() {
-    workspaceDocument = {
+let selectedPageIndex = 0
+function AddPage(name) {
+    workspaceDocument.Pages.push({
+        "PageName": name,
         "Diagrams": [
-            {
-                "Type": "ClassDiagram",
-                "Name": "Class_1",
-                "Properties": [
-                    {
-                        "Name": "Prop 1",
-                        "Type": "int",
-                        "AccessModifier": "Public"
-                    },
-                    {
-                        "Name": "Prop 2",
-                        "Type": "string",
-                        "AccessModifier": "Public"
-                    }
-                ],
-                "Methods": [
-                    {
-                        "AccessModifier": "Public",
-                        "ReturnType": "string",
-                        "Name": "Method 1",
-                        "Arguments": [],
-                    },
-                ],
-                "Attributes": [
-                    "Attribute 1",
-                    "Attribute 2"
-                ],
-                "TemplateArguments": [
-                ],
 
-                "Position": { "X": "820", "Y": "750" },
-
-                "Element": null
-            },
-            {
-                "Type": "ClassDiagram",
-                "Name": "Class_2",
-                "Properties": [
-                    {
-                        "Name": "Prop 3",
-                        "Type": "string",
-                        "AccessModifier": "Public"
-                    },
-                    {
-                        "Name": "Prop 4",
-                        "Type": "float",
-                        "AccessModifier": "Public"
-                    }
-                ],
-                "Methods": [
-                    {
-                        "AccessModifier": "Public",
-                        "ReturnType": "string",
-                        "Name": "Method 2",
-                        "Arguments": [{
-                            "Type": "string",
-                            "Name": "name"
-                        }]
-                    },
-                ],
-                "Attributes": [
-                ],
-                "TemplateArguments": [
-                ],
-
-                "Position": { "X": "1030", "Y": "1020" },
-
-                "Element": null
-            }
         ],
         "Connectors": [
+
+        ]
+    })
+}
+
+function GetPageByIndex(index) {
+    return workspaceDocument.Pages[index]
+}
+
+function GetPage() {
+    return workspaceDocument.Pages[selectedPageIndex]
+}
+
+function SwapPage(index) {
+    selectedPageIndex = index
+}
+
+function ResetWorkspace() {
+    workspaceDocument = {
+        "Pages": [
             {
-                "Type": "Aggregation",
-                "From": "Class_1",
-                "To": "Class_2"
+                "PageName": "Page 1",
+                "Diagrams": [
+                    {
+                        "Type": "ClassDiagram",
+                        "Name": "Class_1",
+                        "Properties": [
+                            {
+                                "Name": "Prop 1",
+                                "Type": "int",
+                                "AccessModifier": "Public"
+                            },
+                            {
+                                "Name": "Prop 2",
+                                "Type": "string",
+                                "AccessModifier": "Public"
+                            }
+                        ],
+                        "Methods": [
+                            {
+                                "AccessModifier": "Public",
+                                "ReturnType": "string",
+                                "Name": "Method 1",
+                                "Arguments": [],
+                            },
+                        ],
+                        "Attributes": [
+                            "Attribute 1",
+                            "Attribute 2"
+                        ],
+                        "TemplateArguments": [
+                        ],
+
+                        "Position": { "X": "820", "Y": "750" },
+
+                        "Element": null
+                    },
+                    {
+                        "Type": "ClassDiagram",
+                        "Name": "Class_2",
+                        "Properties": [
+                            {
+                                "Name": "Prop 3",
+                                "Type": "string",
+                                "AccessModifier": "Public"
+                            },
+                            {
+                                "Name": "Prop 4",
+                                "Type": "float",
+                                "AccessModifier": "Public"
+                            }
+                        ],
+                        "Methods": [
+                            {
+                                "AccessModifier": "Public",
+                                "ReturnType": "string",
+                                "Name": "Method 2",
+                                "Arguments": [{
+                                    "Type": "string",
+                                    "Name": "name"
+                                }]
+                            },
+                        ],
+                        "Attributes": [
+                        ],
+                        "TemplateArguments": [
+                        ],
+
+                        "Position": { "X": "1030", "Y": "1020" },
+
+                        "Element": null
+                    }
+                ],
+                "Connectors": [
+                    {
+                        "Type": "Aggregation",
+                        "From": "Class_1",
+                        "To": "Class_2"
+                    }
+                ]
             }
         ]
     }
-    RegenerateDiagrams()
+    RegenerateAllDiagram()
 }
 
 function AddDiagram(diagram) {
-    workspaceDocument.Diagrams.push(diagram)
+    GetPage().Diagrams.push(diagram)
     UpdateAllDiagrams()
 }
 
 function RemoveDiagramByIndex(index) {
-    workspaceDocument.Diagrams.splice(index, 1)
+    GetPage().Diagrams.splice(index, 1)
     UpdateAllDiagrams()
 }
 
@@ -136,15 +172,15 @@ CreateWorkspaceSvgContainer()
 
 function UpdateAllDiagrams() {
     RegenerateDetailsPanel()
-    RegenerateDiagrams()
-    GenerateDiagramsConnectors()
+    RegenerateAllDiagram()
+    RegenerateDiagramConnectors()
     UpateJsonDocumentViewer()
+    RegeneratePageSelector()
 }
 
 function UpdateCurrentDiagram() {
     RegenerateDetailsPanel()
-    RegenerateDiagram(currentSelectedDiagramIndex)
-    RegenerateDiagramConnectors(currentSelectedDiagramIndex)
+    RegenerateDiagram()
     UpateJsonDocumentViewer()
 }
 
@@ -209,6 +245,7 @@ connection.on("Update", function (newData, jsonDocument) {
     console.log("update:" + newData)
     SetAllInputFieldsFromJson(newData)
     workspaceDocument = JSON.parse(jsonDocument)
+    RegeneratePageSelector()
     UpdateAllDiagrams()
 })
 
